@@ -73,5 +73,7 @@ export const CreateUserControllers = async (
       message: error,
       data: [],
     });
+    console.log(error);
+    
   }
 };

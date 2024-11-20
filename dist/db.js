@@ -9,8 +9,8 @@ const postgres_1 = __importDefault(require("postgres"));
 const connect = (0, postgres_1.default)({
     host: "localhost",
     port: 5432,
-    database: "blanja",
+    database: "recipe",
     username: "postgres",
-    password: "password",
+    password: "postgres",
 });
 exports.default = connect;

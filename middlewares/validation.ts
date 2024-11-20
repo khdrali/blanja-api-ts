@@ -47,8 +47,7 @@ export const handleValidationErrors = (
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => {
       // Ensure type safety by narrowing the error type
-      const param = (error as { param?: string }).param ?? "unknown_field";
-      return { [param]: error.msg };
+      return error?.msg;
     });
 
     res.status(400).json({

@@ -5,9 +5,9 @@ import postgres from "postgres";
 const connect = postgres({
   host: "localhost",
   port: 5432,
-  database: "blanja",
+  database: "recipe",
   username: "postgres",
-  password: "password",
+  password: "postgres",
 });
 
 export default connect;

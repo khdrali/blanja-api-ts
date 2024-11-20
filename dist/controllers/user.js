@@ -77,6 +77,7 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
             message: error,
             data: [],
         });
+        console.log(error);
     }
 });
 exports.CreateUserControllers = CreateUserControllers;

@@ -36,10 +36,8 @@ const handleValidationErrors = (req, res, next) => {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         const errorMessages = errors.array().map((error) => {
-            var _a;
             // Ensure type safety by narrowing the error type
-            const param = (_a = error.param) !== null && _a !== void 0 ? _a : "unknown_field";
-            return { [param]: error.msg };
+            return error === null || error === void 0 ? void 0 : error.msg;
         });
         res.status(400).json({
             valid: false,
