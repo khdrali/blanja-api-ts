@@ -8,12 +8,66 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyOtpController = exports.requestOtpController = void 0;
+exports.verifyOtpController = exports.requestOtpController = exports.login = void 0;
 const otp_1 = require("../models/otp");
 const nodemailer_1 = require("../utils/nodemailer");
 const otp_2 = require("../utils/otp");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const user_1 = require("../models/user");
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    try {
+        const { email, password } = req.body;
+        const checkEmail = yield (0, user_1.getUserByEmail)(email);
+        if (checkEmail.length === 0) {
+            res.status(404).json({
+                valid: false,
+                status: 404,
+                message: "Email not registered",
+            });
+            return; // Exit the function after sending the response
+        }
+        const passwordMatch = yield bcrypt_1.default.compare(password, checkEmail[0].password);
+        if (passwordMatch) {
+            const token = jsonwebtoken_1.default.sign({
+                id: (_a = checkEmail[0]) === null || _a === void 0 ? void 0 : _a.id,
+                username: (_b = checkEmail[0]) === null || _b === void 0 ? void 0 : _b.username,
+                email: (_c = checkEmail[0]) === null || _c === void 0 ? void 0 : _c.email,
+                iat: Math.floor(Date.now() / 1000) - 30,
+            }, String(process.env.SECRET_KEY), { expiresIn: "1h" });
+            res.status(200).json({
+                valid: true,
+                status: 200,
+                message: "Login successfully",
+                data: { token: token },
+            });
+            return; // Exit the function after sending the response
+        }
+        else {
+            res.status(400).json({
+                valid: false,
+                status: 400,
+                message: "Incorrect Email or Password",
+            });
+            return; // Exit the function after sending the response
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            valid: false,
+            status: 500,
+            message: error || "Internal server error",
+        });
+    }
+});
+exports.login = login;
 const requestOtpController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.body;

@@ -13,16 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateOtpUsed = exports.verifyOtp = exports.requestOtpModels = void 0;
-const db_js_1 = __importDefault(require("../db.js"));
+const db_1 = __importDefault(require("../db"));
 const requestOtpModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, db_js_1.default) `INSERT INTO public.otp_request (otp_code, user_id, created_at) 
+    return yield (0, db_1.default) `INSERT INTO public.otp_request (otp_code, user_id, created_at) 
   VALUES (${params === null || params === void 0 ? void 0 : params.otp_code}, 
     (SELECT id FROM public.user WHERE email = ${params === null || params === void 0 ? void 0 : params.email}), ${params === null || params === void 0 ? void 0 : params.created_at}
   )`;
 });
 exports.requestOtpModels = requestOtpModels;
 const verifyOtp = (params) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield (0, db_js_1.default) `
+    const result = yield (0, db_1.default) `
       SELECT otp_request.user_id, otp_request.created_at 
       FROM otp_request
       JOIN "user" ON otp_request.user_id = "user".id 
@@ -34,7 +34,7 @@ const verifyOtp = (params) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.verifyOtp = verifyOtp;
 const updateOtpUsed = (otp_code) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, db_js_1.default) `
+    return yield (0, db_1.default) `
     UPDATE otp_request
     SET is_used = true
     WHERE otp_code = ${otp_code}

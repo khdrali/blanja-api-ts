@@ -12,7 +12,20 @@ export interface RequestOtpType {
   created_at: Date;
 }
 
-export interface verifyOtpType{
-  otp_code:string,
-  email:string
+export interface verifyOtpType {
+  otp_code: string;
+  email: string;
+}
+
+export interface CreateRecipeType {
+  title: string;
+  ingredients: string;
+  image_recipe: string;
+  user_id: number;
+  created_at: Date;
+}
+
+export interface CreateVideoType {
+  video_url: string | string[];
+  recipe_id: number;
 }

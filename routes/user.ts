@@ -8,10 +8,11 @@ import {
   validateCreate,
   handleValidationErrors,
 } from "../middlewares/validation";
+import { validateToken } from "../middlewares/validate-token";
 
 const router = express.Router();
 
-router.get("/", GetAllUserController);
+router.get("/", validateToken, GetAllUserController);
 router.post(
   "/add",
   validateCreate,

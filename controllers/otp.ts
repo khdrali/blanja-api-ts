@@ -4,19 +4,26 @@ import { generateOTP } from "../utils/otp";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { checkUserActive, getUserByEmail, UpdateUserActive } from "../models/user";
+import dotenv from "dotenv";
+dotenv.config();
+import {
+  checkUserActive,
+  getUserByEmail,
+  UpdateUserActive,
+} from "../models/user";
 
-export const login = async (req:Request, res:Response) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     const checkEmail = await getUserByEmail(email);
     if (checkEmail.length === 0) {
-      return res.json({
+      res.status(404).json({
         valid: false,
         status: 404,
         message: "Email not registered",
       });
+      return; // Exit the function after sending the response
     }
 
     const passwordMatch = await bcrypt.compare(
@@ -32,28 +39,30 @@ export const login = async (req:Request, res:Response) => {
           email: checkEmail[0]?.email,
           iat: Math.floor(Date.now() / 1000) - 30,
         },
-        "shhhhh", // Gantilah dengan secret yang lebih kuat di lingkungan produksi
+        String(process.env.SECRET_KEY),
         { expiresIn: "1h" }
       );
 
-      return res.json({
+      res.status(200).json({
         valid: true,
         status: 200,
         message: "Login successfully",
         data: { token: token },
       });
+      return; // Exit the function after sending the response
     } else {
-      return res.json({
+      res.status(400).json({
         valid: false,
         status: 400,
         message: "Incorrect Email or Password",
       });
+      return; // Exit the function after sending the response
     }
   } catch (error) {
-    return res.json({
+    res.status(500).json({
       valid: false,
       status: 500,
-      message: error,
+      message: error || "Internal server error",
     });
   }
 };
@@ -87,7 +96,10 @@ export const requestOtpController = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyOtpController = async (req: Request, res: Response): Promise<void> => {
+export const verifyOtpController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { otp_code, email } = req.body;
 
   try {

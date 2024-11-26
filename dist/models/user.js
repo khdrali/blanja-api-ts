@@ -12,12 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetAllUserModels = void 0;
+exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
 const db_1 = __importDefault(require("../db"));
 const GetAllUserModels = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, db_1.default) `SELECT * FROM public.user`;
 });
 exports.GetAllUserModels = GetAllUserModels;
+const GetUserByIdModels = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `SELECT * FROM public.user WHERE id = ${id}`;
+});
+exports.GetUserByIdModels = GetUserByIdModels;
 const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, db_1.default) `SELECT * FROM public.user WHERE email=${email}`;
 });

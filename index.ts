@@ -1,6 +1,8 @@
 import express from "express";
 import userRoutes from "./routes/user";
-import authRoutes from "./routes/auth"
+import authRoutes from "./routes/auth";
+import recipeRotes from "./routes/recipe";
+import multer from "multer";
 import dotenv from "dotenv";
 
 // configures dotenv to work in your application
@@ -11,7 +13,8 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use("/users", userRoutes);
-app.use('/auth',authRoutes)
+app.use("/auth", authRoutes);
+app.use("/recipe", recipeRotes);
 
 app
   .listen(PORT, () => {

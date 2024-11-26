@@ -1,5 +1,5 @@
-import db from "../db.js";
-import { RequestOtpType, verifyOtpType } from "./type.js";
+import db from "../db";
+import { RequestOtpType, verifyOtpType } from "./type";
 
 export const requestOtpModels = async (params: RequestOtpType) => {
   return await db`INSERT INTO public.otp_request (otp_code, user_id, created_at) 
@@ -8,7 +8,7 @@ export const requestOtpModels = async (params: RequestOtpType) => {
   )`;
 };
 
-export const verifyOtp = async (params:verifyOtpType) => {
+export const verifyOtp = async (params: verifyOtpType) => {
   const result = await db`
       SELECT otp_request.user_id, otp_request.created_at 
       FROM otp_request
@@ -21,10 +21,10 @@ export const verifyOtp = async (params:verifyOtpType) => {
   return result;
 };
 
-export const updateOtpUsed = async (otp_code:string) => {
+export const updateOtpUsed = async (otp_code: string) => {
   return await db`
     UPDATE otp_request
     SET is_used = true
     WHERE otp_code = ${otp_code}
   `;
-}
+};

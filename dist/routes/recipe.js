@@ -4,10 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const user_1 = require("../controllers/user");
-const validation_1 = require("../middlewares/validation");
 const validate_token_1 = require("../middlewares/validate-token");
+const recipe_1 = require("../controllers/recipe");
 const router = express_1.default.Router();
-router.get("/", validate_token_1.validateToken, user_1.GetAllUserController);
-router.post("/add", validation_1.validateCreate, validation_1.handleValidationErrors, user_1.CreateUserControllers);
+// Route dengan middleware validateToken
+router.post("/add-recipe", validate_token_1.validateToken, recipe_1.CreateRecipeController);
 exports.default = router;

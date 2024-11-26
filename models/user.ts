@@ -5,6 +5,10 @@ export const GetAllUserModels = async () => {
   return await db`SELECT * FROM public.user`;
 };
 
+export const GetUserByIdModels = async (id: number) => {
+  return await db`SELECT * FROM public.user WHERE id = ${id}`;
+};
+
 export const getUserByEmail = async (email: string) => {
   return await db`SELECT * FROM public.user WHERE email=${email}`;
 };
@@ -17,13 +21,13 @@ export const CreateUserController = async (params: CreateType) => {
   }
 };
 
-export const checkUserActive = async (user_id:number) => {
+export const checkUserActive = async (user_id: number) => {
   const result =
     await db`SELECT public.user.is_active FROM public.user WHERE id=${user_id}`;
   return result[0]?.is_active ?? false;
 };
 
-export const UpdateUserActive = async (user_id:number) => {
+export const UpdateUserActive = async (user_id: number) => {
   return await db`
     UPDATE public.user
     SET is_active = true
