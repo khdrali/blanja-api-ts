@@ -12,13 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateVideoModels = exports.CreateRecipeModels = void 0;
+exports.GetRecipeByIdModels = exports.GetAllRecipeModels = exports.CreateVideoModels = exports.CreateRecipeModels = void 0;
 const db_1 = __importDefault(require("../db"));
-// export const CreateRecipeModels = async (params: CreateRecipeType) => {
-//   return await db`
-//     INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
-//     VALUES (${params?.title}, ${params?.ingredients}, ${params?.image_recipe}, ${params?.user_id}, ${params?.created_at})`;
-// };
 const CreateRecipeModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (0, db_1.default) `
     INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
@@ -51,3 +46,48 @@ const CreateVideoModels = (params) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.CreateVideoModels = CreateVideoModels;
+const GetAllRecipeModels = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, db_1.default) `
+    SELECT 
+      r.id AS recipe_id,
+      r.title,
+      r.ingredients,
+      r.image_recipe,
+      r.user_id,
+      r.created_at,
+      COALESCE(json_agg(v.video_url), '[]') AS videos
+    FROM 
+      public.recipe r
+    LEFT JOIN 
+      public.video v 
+    ON 
+      r.id = v.recipe_id
+    GROUP BY 
+      r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at
+    LIMIT 10
+      `;
+    return result;
+});
+exports.GetAllRecipeModels = GetAllRecipeModels;
+const GetRecipeByIdModels = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `SELECT 
+  r.id AS recipe_id,
+  r.title,
+  r.ingredients,
+  r.image_recipe,
+  r.user_id,
+  r.created_at,
+  COALESCE(json_agg(v.video_url), '[]') AS videos
+FROM 
+  public.recipe r
+LEFT JOIN 
+  public.video v 
+ON 
+  r.id = v.recipe_id
+WHERE 
+  r.id = ${id}
+GROUP BY 
+  r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at;
+`;
+});
+exports.GetRecipeByIdModels = GetRecipeByIdModels;

@@ -5,6 +5,7 @@ import {
   CreateUserController,
   GetAllUserModels,
   getUserByEmail,
+  GetUserByIdModels,
 } from "../models/user";
 dotenv.config();
 const saltrounds = 10;
@@ -73,7 +74,42 @@ export const CreateUserControllers = async (
       message: error,
       data: [],
     });
-    console.log(error);
-    
   }
 };
+
+export const GetUserByIdController=async(req:Request,res:Response)=>{
+  try {
+    const { id } = req?.params;
+    if (typeof id !== 'string') {
+       res.status(400).json({
+        valid: false,
+        status: 400,
+        message: 'ID parameter must be a string',
+      });
+    }
+
+    const result = await GetUserByIdModels(id);
+    if (result && result.length > 0) {
+       res.status(200).json({
+        valid: true,
+        status: 200,
+        message: 'Successfully Get User',
+        data: result,
+      });
+    } else {
+       res.status(404).json({
+        valid: false,
+        status: 404,
+        message: 'User Not Found',
+        data: [],
+      });
+    }
+  } catch (error) {
+   res.status(500).json({
+    valid:false,
+    status:500,
+    message:error,
+    data:[]
+   })
+  }
+}

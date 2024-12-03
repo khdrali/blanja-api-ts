@@ -1,6 +1,6 @@
 import express from "express";
 import { validateToken } from "../middlewares/validate-token";
-import { CreateRecipeController } from "../controllers/recipe";
+import { CreateRecipeController, GetAllRecipeController, GetRecipeByIdController } from "../controllers/recipe";
 import upload from "../middlewares/multerConfig";
 
 const router = express.Router();
@@ -16,4 +16,6 @@ router.post(
   CreateRecipeController
 );
 
+router.get("/get-recipe",GetAllRecipeController)
+router.get('/detail-recipe/:id',GetRecipeByIdController)
 export default router;

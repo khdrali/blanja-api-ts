@@ -54,7 +54,29 @@ export const GetAllRecipeModels = async () => {
       r.id = v.recipe_id
     GROUP BY 
       r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at
-    LIMIT=10
+    LIMIT 10
       `;
   return result;
 };
+
+export const GetRecipeByIdModels=async (id:string)=>{
+  return await connect`SELECT 
+  r.id AS recipe_id,
+  r.title,
+  r.ingredients,
+  r.image_recipe,
+  r.user_id,
+  r.created_at,
+  COALESCE(json_agg(v.video_url), '[]') AS videos
+FROM 
+  public.recipe r
+LEFT JOIN 
+  public.video v 
+ON 
+  r.id = v.recipe_id
+WHERE 
+  r.id = ${id}
+GROUP BY 
+  r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at;
+`
+}

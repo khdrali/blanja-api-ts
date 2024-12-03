@@ -13,4 +13,6 @@ router.post("/add-recipe", multerConfig_1.default.fields([
     { name: "image_recipe", maxCount: 1 },
     { name: "videos", maxCount: 3 },
 ]), validate_token_1.validateToken, recipe_1.CreateRecipeController);
+router.get("/get-recipe", recipe_1.GetAllRecipeController);
+router.get('/detail-recipe/:id', recipe_1.GetRecipeByIdController);
 exports.default = router;

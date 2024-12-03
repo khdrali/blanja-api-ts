@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateRecipeController = void 0;
+exports.GetRecipeByIdController = exports.GetAllRecipeController = exports.CreateRecipeController = void 0;
 const recipe_1 = require("../models/recipe");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { title, ingredients, image_recipe, videos } = req.body;
+    const { title, ingredients } = req.body;
     const files = req.files;
     try {
         const user_id = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : 0; // Ambil user_id dari token
@@ -76,7 +76,6 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
         });
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({
             valid: false,
             status: 500,
@@ -85,3 +84,61 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.CreateRecipeController = CreateRecipeController;
+const GetAllRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, recipe_1.GetAllRecipeModels)();
+        res.json({
+            valid: true,
+            status: 200,
+            message: "Successfuly Get All Data",
+            data: result
+        });
+    }
+    catch (error) {
+        res.json({
+            valid: false,
+            status: 500,
+            message: error,
+            data: []
+        });
+    }
+});
+exports.GetAllRecipeController = GetAllRecipeController;
+const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req === null || req === void 0 ? void 0 : req.params;
+        if (typeof id !== 'string') {
+            res.status(400).json({
+                valid: false,
+                status: 400,
+                message: 'ID parameter must be a string',
+            });
+        }
+        const result = yield (0, recipe_1.GetRecipeByIdModels)(id);
+        if (result && result.length > 0) {
+            res.status(200).json({
+                valid: true,
+                status: 200,
+                message: 'Successfully Get Recipe',
+                data: result,
+            });
+        }
+        else {
+            res.status(404).json({
+                valid: false,
+                status: 404,
+                message: 'Recipe Not Found',
+                data: [],
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            valid: false,
+            status: 500,
+            message: error,
+            data: []
+        });
+    }
+});
+exports.GetRecipeByIdController = GetRecipeByIdController;

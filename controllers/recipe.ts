@@ -3,9 +3,11 @@ import {
   CreateRecipeModels,
   CreateVideoModels,
   GetAllRecipeModels,
+  GetRecipeByIdModels,
 } from "../models/recipe";
 import dotenv from "dotenv";
 import { CreateRecipeType } from "../models/type";
+import { GetUserByIdModels } from "../models/user";
 
 dotenv.config();
 
@@ -75,7 +77,6 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       valid: false,
       status: 500,
@@ -90,7 +91,53 @@ export const GetAllRecipeController = async (req: Request, res: Response) => {
     res.json({
       valid: true,
       status: 200,
-      message: "",
+      message: "Successfuly Get All Data",
+      data:result
     });
-  } catch (error) {}
+  } catch (error) {
+    
+    res.json({
+      valid:false,
+      status:500,
+      message:error,
+      data:[]
+    })
+  }
 };
+
+export const GetRecipeByIdController=async(req:Request,res:Response)=>{
+  try {
+    const { id } = req?.params;
+    if (typeof id !== 'string') {
+       res.status(400).json({
+        valid: false,
+        status: 400,
+        message: 'ID parameter must be a string',
+      });
+    }
+
+    const result = await GetRecipeByIdModels(id);
+    if (result && result.length > 0) {
+       res.status(200).json({
+        valid: true,
+        status: 200,
+        message: 'Successfully Get Recipe',
+        data: result,
+      });
+    } else {
+       res.status(404).json({
+        valid: false,
+        status: 404,
+        message: 'Recipe Not Found',
+        data: [],
+      });
+    }
+  } catch (error) {
+   res.status(500).json({
+    valid:false,
+    status:500,
+    message:error,
+    data:[]
+   })
+  }
+}

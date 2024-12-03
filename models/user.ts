@@ -5,7 +5,7 @@ export const GetAllUserModels = async () => {
   return await db`SELECT * FROM public.user`;
 };
 
-export const GetUserByIdModels = async (id: number) => {
+export const GetUserByIdModels = async (id: string) => {
   return await db`SELECT * FROM public.user WHERE id = ${id}`;
 };
 
