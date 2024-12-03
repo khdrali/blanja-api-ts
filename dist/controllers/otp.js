@@ -22,7 +22,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const user_1 = require("../models/user");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     try {
         const { email, password } = req.body;
         const checkEmail = yield (0, user_1.getUserByEmail)(email);
@@ -34,29 +34,39 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return; // Exit the function after sending the response
         }
-        const passwordMatch = yield bcrypt_1.default.compare(password, checkEmail[0].password);
-        if (passwordMatch) {
-            const token = jsonwebtoken_1.default.sign({
-                id: (_a = checkEmail[0]) === null || _a === void 0 ? void 0 : _a.id,
-                username: (_b = checkEmail[0]) === null || _b === void 0 ? void 0 : _b.username,
-                email: (_c = checkEmail[0]) === null || _c === void 0 ? void 0 : _c.email,
-                iat: Math.floor(Date.now() / 1000) - 30,
-            }, String(process.env.SECRET_KEY), { expiresIn: "1h" });
-            res.status(200).json({
-                valid: true,
-                status: 200,
-                message: "Login successfully",
-                data: { token: token },
-            });
-            return; // Exit the function after sending the response
+        const checkUserActive = (_a = checkEmail.find((v) => v === null || v === void 0 ? void 0 : v.is_active)) === null || _a === void 0 ? void 0 : _a.is_active;
+        if (checkUserActive) {
+            const passwordMatch = yield bcrypt_1.default.compare(password, checkEmail[0].password);
+            if (passwordMatch) {
+                const token = jsonwebtoken_1.default.sign({
+                    id: (_b = checkEmail[0]) === null || _b === void 0 ? void 0 : _b.id,
+                    username: (_c = checkEmail[0]) === null || _c === void 0 ? void 0 : _c.username,
+                    email: (_d = checkEmail[0]) === null || _d === void 0 ? void 0 : _d.email,
+                    iat: Math.floor(Date.now() / 1000) - 30,
+                }, String(process.env.SECRET_KEY), { expiresIn: "1h" });
+                res.status(200).json({
+                    valid: true,
+                    status: 200,
+                    message: "Login successfully",
+                    data: { token: token },
+                });
+                return; // Exit the function after sending the response
+            }
+            else {
+                res.status(400).json({
+                    valid: false,
+                    status: 400,
+                    message: "Incorrect Email or Password",
+                });
+                return; // Exit the function after sending the response
+            }
         }
         else {
-            res.status(400).json({
+            (_e = res === null || res === void 0 ? void 0 : res.status(400)) === null || _e === void 0 ? void 0 : _e.json({
                 valid: false,
                 status: 400,
-                message: "Incorrect Email or Password",
+                message: "Account not actived",
             });
-            return; // Exit the function after sending the response
         }
     }
     catch (error) {

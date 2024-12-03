@@ -25,38 +25,46 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       });
       return; // Exit the function after sending the response
     }
-
-    const passwordMatch = await bcrypt.compare(
-      password,
-      checkEmail[0].password
-    );
-
-    if (passwordMatch) {
-      const token = jwt.sign(
-        {
-          id: checkEmail[0]?.id,
-          username: checkEmail[0]?.username,
-          email: checkEmail[0]?.email,
-          iat: Math.floor(Date.now() / 1000) - 30,
-        },
-        String(process.env.SECRET_KEY),
-        { expiresIn: "1h" }
+    const checkUserActive = checkEmail.find((v) => v?.is_active)?.is_active;
+    if (checkUserActive) {
+      const passwordMatch = await bcrypt.compare(
+        password,
+        checkEmail[0].password
       );
 
-      res.status(200).json({
-        valid: true,
-        status: 200,
-        message: "Login successfully",
-        data: { token: token },
-      });
-      return; // Exit the function after sending the response
+      if (passwordMatch) {
+        const token = jwt.sign(
+          {
+            id: checkEmail[0]?.id,
+            username: checkEmail[0]?.username,
+            email: checkEmail[0]?.email,
+            iat: Math.floor(Date.now() / 1000) - 30,
+          },
+          String(process.env.SECRET_KEY),
+          { expiresIn: "1h" }
+        );
+
+        res.status(200).json({
+          valid: true,
+          status: 200,
+          message: "Login successfully",
+          data: { token: token },
+        });
+        return; // Exit the function after sending the response
+      } else {
+        res.status(400).json({
+          valid: false,
+          status: 400,
+          message: "Incorrect Email or Password",
+        });
+        return; // Exit the function after sending the response
+      }
     } else {
-      res.status(400).json({
+      res?.status(400)?.json({
         valid: false,
         status: 400,
-        message: "Incorrect Email or Password",
+        message: "Account not actived",
       });
-      return; // Exit the function after sending the response
     }
   } catch (error) {
     res.status(500).json({

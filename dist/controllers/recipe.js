@@ -19,6 +19,7 @@ dotenv_1.default.config();
 const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { title, ingredients, image_recipe, videos } = req.body;
+    const files = req.files;
     try {
         const user_id = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : 0; // Ambil user_id dari token
         if (!user_id || user_id == 0) {
@@ -28,6 +29,9 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
                 message: "Unauthorized",
             });
         }
+        const image_recipe = files.image_recipe
+            ? `/uploads/images/${files.image_recipe[0].filename}`
+            : null;
         // Membuat recipe
         const recipeParams = {
             user_id: user_id,
@@ -37,27 +41,37 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             created_at: new Date(),
         };
         const recipe = yield (0, recipe_1.CreateRecipeModels)(recipeParams);
-        // Jika videos adalah array, maka masukkan semua video
-        if (videos && Array.isArray(videos)) {
-            yield (0, recipe_1.CreateVideoModels)({
-                recipe_id: recipe.id,
-                video_url: videos, // Pass array of video URLs
-            });
+        if (files.videos) {
+            const videoUlrs = files.videos.map((video) => `/uploads/videos/${video === null || video === void 0 ? void 0 : video.filename}`);
+            for (const videoUlr of videoUlrs) {
+                yield (0, recipe_1.CreateVideoModels)({
+                    recipe_id: recipe.id,
+                    video_url: videoUlr, // Pass array of video URLs
+                });
+            }
         }
-        else if (videos) {
-            // Jika hanya satu video, langsung masukkan satu video
-            yield (0, recipe_1.CreateVideoModels)({
-                recipe_id: recipe.id,
-                video_url: videos, // Pass single video URL
-            });
-        }
+        // if (videos && Array.isArray(videos)) {
+        //   // Jika videos adalah array, maka masukkan semua video
+        //   await CreateVideoModels({
+        //     recipe_id: recipe.id,
+        //     video_url: videos, // Pass array of video URLs
+        //   });
+        // } else if (videos) {
+        //   // Jika hanya satu video, langsung masukkan satu video
+        //   await CreateVideoModels({
+        //     recipe_id: recipe.id,
+        //     video_url: videos, // Pass single video URL
+        //   });
+        // }
         res.status(200).json({
             valid: true,
             status: 200,
             message: "Successfully Created Recipe",
             data: {
                 recipe: recipe,
-                videos: videos || [],
+                videos: files.videos
+                    ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
+                    : [],
             },
         });
     }

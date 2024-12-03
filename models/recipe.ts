@@ -1,11 +1,6 @@
 import connect from "../db";
-import { CreateRecipeType, CreateVideoType } from "./type";
+import { CreateRecipeType, CreateVideoType, GetDataType } from "./type";
 
-// export const CreateRecipeModels = async (params: CreateRecipeType) => {
-//   return await db`
-//     INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
-//     VALUES (${params?.title}, ${params?.ingredients}, ${params?.image_recipe}, ${params?.user_id}, ${params?.created_at})`;
-// };
 export const CreateRecipeModels = async (params: CreateRecipeType) => {
   const result = await connect`
     INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
@@ -39,4 +34,27 @@ export const CreateVideoModels = async (params: CreateVideoType) => {
 
     return result;
   }
+};
+
+export const GetAllRecipeModels = async () => {
+  const result = await connect`
+    SELECT 
+      r.id AS recipe_id,
+      r.title,
+      r.ingredients,
+      r.image_recipe,
+      r.user_id,
+      r.created_at,
+      COALESCE(json_agg(v.video_url), '[]') AS videos
+    FROM 
+      public.recipe r
+    LEFT JOIN 
+      public.video v 
+    ON 
+      r.id = v.recipe_id
+    GROUP BY 
+      r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at
+    LIMIT=10
+      `;
+  return result;
 };

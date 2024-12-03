@@ -39,7 +39,6 @@ const CreateVideoModels = (params) => __awaiter(void 0, void 0, void 0, function
       INSERT INTO public.video (video_url, recipe_id)
       VALUES ${(0, db_1.default)(videoValues)}
     `;
-        console.log(result);
         return result;
     }
     else {
@@ -48,7 +47,6 @@ const CreateVideoModels = (params) => __awaiter(void 0, void 0, void 0, function
       INSERT INTO public.video (video_url, recipe_id)
       VALUES (${params.video_url}, ${params.recipe_id})
     `;
-        console.log(result);
         return result;
     }
 });

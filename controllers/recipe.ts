@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
-import { CreateRecipeModels, CreateVideoModels } from "../models/recipe";
+import {
+  CreateRecipeModels,
+  CreateVideoModels,
+  GetAllRecipeModels,
+} from "../models/recipe";
 import dotenv from "dotenv";
 import { CreateRecipeType } from "../models/type";
 
 dotenv.config();
 
 export const CreateRecipeController = async (req: Request, res: Response) => {
-  const { title, ingredients, image_recipe, videos } = req.body;
+  const { title, ingredients } = req.body;
+  const files = req.files as { [fieldname: string]: Express.Multer.File[] };
   try {
     const user_id = req.user?.id ?? 0; // Ambil user_id dari token
 
@@ -17,6 +22,10 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
         message: "Unauthorized",
       });
     }
+
+    const image_recipe = files.image_recipe
+      ? `/uploads/images/${files.image_recipe[0].filename}`
+      : null;
 
     // Membuat recipe
     const recipeParams: CreateRecipeType = {
@@ -29,19 +38,30 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
 
     const recipe = await CreateRecipeModels(recipeParams);
 
-    // Jika videos adalah array, maka masukkan semua video
-    if (videos && Array.isArray(videos)) {
-      await CreateVideoModels({
-        recipe_id: recipe.id,
-        video_url: videos, // Pass array of video URLs
-      });
-    } else if (videos) {
-      // Jika hanya satu video, langsung masukkan satu video
-      await CreateVideoModels({
-        recipe_id: recipe.id,
-        video_url: videos, // Pass single video URL
-      });
+    if (files.videos) {
+      const videoUlrs = files.videos.map(
+        (video) => `/uploads/videos/${video?.filename}`
+      );
+      for (const videoUlr of videoUlrs) {
+        await CreateVideoModels({
+          recipe_id: recipe.id,
+          video_url: videoUlr, // Pass array of video URLs
+        });
+      }
     }
+    // if (videos && Array.isArray(videos)) {
+    //   // Jika videos adalah array, maka masukkan semua video
+    //   await CreateVideoModels({
+    //     recipe_id: recipe.id,
+    //     video_url: videos, // Pass array of video URLs
+    //   });
+    // } else if (videos) {
+    //   // Jika hanya satu video, langsung masukkan satu video
+    //   await CreateVideoModels({
+    //     recipe_id: recipe.id,
+    //     video_url: videos, // Pass single video URL
+    //   });
+    // }
 
     res.status(200).json({
       valid: true,
@@ -49,7 +69,9 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
       message: "Successfully Created Recipe",
       data: {
         recipe: recipe,
-        videos: videos || [],
+        videos: files.videos
+          ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
+          : [],
       },
     });
   } catch (error) {
@@ -60,4 +82,15 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
       message: "Error creating recipe and videos",
     });
   }
+};
+
+export const GetAllRecipeController = async (req: Request, res: Response) => {
+  try {
+    const result = await GetAllRecipeModels();
+    res.json({
+      valid: true,
+      status: 200,
+      message: "",
+    });
+  } catch (error) {}
 };
