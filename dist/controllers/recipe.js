@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetRecipeByIdController = exports.GetAllRecipeController = exports.CreateRecipeController = void 0;
+exports.GetRecipeByUserIdController = exports.GetRecipeByIdController = exports.GetAllRecipeController = exports.CreateRecipeController = void 0;
 const recipe_1 = require("../models/recipe");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -50,19 +50,6 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
                 });
             }
         }
-        // if (videos && Array.isArray(videos)) {
-        //   // Jika videos adalah array, maka masukkan semua video
-        //   await CreateVideoModels({
-        //     recipe_id: recipe.id,
-        //     video_url: videos, // Pass array of video URLs
-        //   });
-        // } else if (videos) {
-        //   // Jika hanya satu video, langsung masukkan satu video
-        //   await CreateVideoModels({
-        //     recipe_id: recipe.id,
-        //     video_url: videos, // Pass single video URL
-        //   });
-        // }
         res.status(200).json({
             valid: true,
             status: 200,
@@ -91,7 +78,7 @@ const GetAllRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             valid: true,
             status: 200,
             message: "Successfuly Get All Data",
-            data: result
+            data: result,
         });
     }
     catch (error) {
@@ -99,7 +86,7 @@ const GetAllRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             valid: false,
             status: 500,
             message: error,
-            data: []
+            data: [],
         });
     }
 });
@@ -107,11 +94,11 @@ exports.GetAllRecipeController = GetAllRecipeController;
 const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req === null || req === void 0 ? void 0 : req.params;
-        if (typeof id !== 'string') {
+        if (typeof id !== "string") {
             res.status(400).json({
                 valid: false,
                 status: 400,
-                message: 'ID parameter must be a string',
+                message: "ID parameter must be a string",
             });
         }
         const result = yield (0, recipe_1.GetRecipeByIdModels)(id);
@@ -119,7 +106,7 @@ const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, 
             res.status(200).json({
                 valid: true,
                 status: 200,
-                message: 'Successfully Get Recipe',
+                message: "Successfully Get Recipe",
                 data: result,
             });
         }
@@ -127,7 +114,7 @@ const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, 
             res.status(404).json({
                 valid: false,
                 status: 404,
-                message: 'Recipe Not Found',
+                message: "Recipe Not Found",
                 data: [],
             });
         }
@@ -137,8 +124,41 @@ const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, 
             valid: false,
             status: 500,
             message: error,
-            data: []
+            data: [],
         });
     }
 });
 exports.GetRecipeByIdController = GetRecipeByIdController;
+const GetRecipeByUserIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const { id } = req === null || req === void 0 ? void 0 : req.params;
+        const result = yield (0, recipe_1.GetRecipeByUserIdModels)(id);
+        if (result && result.length > 0) {
+            res.status(200).json({
+                valid: true,
+                status: 200,
+                message: "Successfuly Get Recipe",
+                data: result,
+            });
+        }
+        else {
+            (_a = res === null || res === void 0 ? void 0 : res.status(404)) === null || _a === void 0 ? void 0 : _a.json({
+                valid: false,
+                status: 404,
+                message: "Recipe Not Found",
+                data: [],
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        (_b = res === null || res === void 0 ? void 0 : res.status(500)) === null || _b === void 0 ? void 0 : _b.json({
+            valid: false,
+            status: 500,
+            message: error,
+            data: [],
+        });
+    }
+});
+exports.GetRecipeByUserIdController = GetRecipeByUserIdController;

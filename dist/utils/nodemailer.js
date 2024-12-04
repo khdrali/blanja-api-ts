@@ -31,7 +31,7 @@ const sendMail = (email, subject, message) => __awaiter(void 0, void 0, void 0, 
             from: "khaidarali48@gmail.com",
             to: email,
             subject: subject,
-            text: message,
+            html: message,
         };
         yield trasporter.sendMail(mailOptions);
         console.log("Email sent successfully!");

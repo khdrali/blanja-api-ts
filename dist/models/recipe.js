@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetRecipeByIdModels = exports.GetAllRecipeModels = exports.CreateVideoModels = exports.CreateRecipeModels = void 0;
+exports.GetRecipeByUserIdModels = exports.GetRecipeByIdModels = exports.GetAllRecipeModels = exports.CreateVideoModels = exports.CreateRecipeModels = void 0;
 const db_1 = __importDefault(require("../db"));
 const CreateRecipeModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (0, db_1.default) `
@@ -91,3 +91,26 @@ GROUP BY
 `;
 });
 exports.GetRecipeByIdModels = GetRecipeByIdModels;
+const GetRecipeByUserIdModels = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `
+  SELECT 
+    r.id AS recipe_id,
+    r.title,
+    r.ingredients,
+    r.image_recipe,
+    r.user_id,
+    r.created_at,
+    COALESCE(json_agg(v.video_url), '[]') AS videos
+  FROM 
+    public.recipe r
+  LEFT JOIN 
+    public.video v 
+  ON 
+    r.id = v.recipe_id
+  WHERE 
+    r.user_id = ${id}
+  GROUP BY 
+    r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at;
+  `;
+});
+exports.GetRecipeByUserIdModels = GetRecipeByUserIdModels;

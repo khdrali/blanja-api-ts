@@ -9,5 +9,6 @@ const validation_1 = require("../middlewares/validation");
 const validate_token_1 = require("../middlewares/validate-token");
 const router = express_1.default.Router();
 router.get("/", validate_token_1.validateToken, user_1.GetAllUserController);
+router.get("/user/:id", validate_token_1.validateToken, user_1.GetUserByIdController);
 router.post("/add", validation_1.validateCreate, validation_1.handleValidationErrors, user_1.CreateUserControllers);
 exports.default = router;

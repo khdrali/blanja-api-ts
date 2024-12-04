@@ -39,3 +39,9 @@ export interface GetDataType {
   created_at: Date;
   video_url: string | string[];
 }
+
+export interface ResetPasswordType {
+  email: string;
+  token: string;
+  created_at: Date;
+}

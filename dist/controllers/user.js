@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserControllers = exports.GetAllUserController = void 0;
+exports.GetUserByIdController = exports.CreateUserControllers = exports.GetAllUserController = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_1 = require("../models/user");
@@ -80,3 +80,41 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.CreateUserControllers = CreateUserControllers;
+const GetUserByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req === null || req === void 0 ? void 0 : req.params;
+        if (typeof id !== 'string') {
+            res.status(400).json({
+                valid: false,
+                status: 400,
+                message: 'ID parameter must be a string',
+            });
+        }
+        const result = yield (0, user_1.GetUserByIdModels)(id);
+        if (result && result.length > 0) {
+            res.status(200).json({
+                valid: true,
+                status: 200,
+                message: 'Successfully Get User',
+                data: result,
+            });
+        }
+        else {
+            res.status(404).json({
+                valid: false,
+                status: 404,
+                message: 'User Not Found',
+                data: [],
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            valid: false,
+            status: 500,
+            message: error,
+            data: []
+        });
+    }
+});
+exports.GetUserByIdController = GetUserByIdController;

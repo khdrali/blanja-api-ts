@@ -21,7 +21,7 @@ export const sendMail = async (
       from: "khaidarali48@gmail.com",
       to: email,
       subject: subject,
-      text: message,
+      html: message,
     };
     await trasporter.sendMail(mailOptions);
     console.log("Email sent successfully!");
