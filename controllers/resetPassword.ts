@@ -8,6 +8,7 @@ import {
 import { sendMail } from "../utils/nodemailer";
 import bcrypt from "bcrypt";
 import { ChangeResetPasswordModels } from "../models/user";
+import { sendResponse } from "../utils/sendResponse";
 const saltrounds = 10;
 
 export const RequestResetPasswordControllers = async (
@@ -20,20 +21,12 @@ export const RequestResetPasswordControllers = async (
     const token = uuidv4();
 
     await RequestResetPasswordModels({ email, token, created_at: date });
-    res.json({
-      valid: true,
-      status: 200,
-      message: "Check your email to Reset Password",
-    });
+    sendResponse(res, 200, true, "Check your email to reset password");
     const subject = "Reset Password";
-    const meesage = `<a href=http://localhost:3000/${token}>Click here</a> to reset password`;
+    const meesage = `<a href=http://localhost:3000/reset-password?token=${token}>Click here</a> to reset password`;
     sendMail(email, subject, meesage);
   } catch (error) {
-    res.json({
-      valid: false,
-      status: 500,
-      message: error,
-    });
+    sendResponse(res, 500, false, "Internal server error");
   }
 };
 
@@ -46,52 +39,37 @@ export const ChangeResetPasswordControllers = async (
     const { token } = req?.query;
 
     if (new_password !== confirm_password) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Password & Confirm password doesn't match",
-      });
+      sendResponse(
+        res,
+        400,
+        false,
+        "Password & Confirm password doesn't match"
+      );
       return;
     }
 
     if (typeof token !== "string" || !token) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Invalid token format",
-      });
+      sendResponse(res, 400, false, "Invalid token format");
       return;
     }
 
     const checkTokenUser = await GetDataResetPasswordModels(token as string);
     if (!checkTokenUser || checkTokenUser.length === 0) {
-      res.status(404).json({
-        valid: false,
-        status: 404,
-        message: "Invalid Token",
-      });
+      sendResponse(res, 404, false, "Invalid Token");
       return;
     }
 
     const { user_id, is_used, created_at } = checkTokenUser[0];
 
     if (is_used) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Token has already been used",
-      });
+      sendResponse(res, 400, false, "Token has already been used");
       return;
     }
 
     const expiredToken = new Date(created_at);
     expiredToken.setMinutes(expiredToken.getMinutes() + 10);
     if (new Date() > expiredToken) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Token Expired",
-      });
+      sendResponse(res, 400, false, "Token Expired");
       return;
     }
 
@@ -103,17 +81,8 @@ export const ChangeResetPasswordControllers = async (
     });
 
     await ResetPasswordUsedModels(token as string);
-
-    res.status(200).json({
-      valid: true,
-      status: 200,
-      message: "Successfully Changed Password",
-    });
+    sendResponse(res, 200, true, "Successfully Changed Password");
   } catch (error) {
-    res.status(500).json({
-      valid: false,
-      status: 500,
-      message: error,
-    });
+    sendResponse(res, 500, false);
   }
 };

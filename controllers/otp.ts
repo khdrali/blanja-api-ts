@@ -12,6 +12,7 @@ import {
   getUserByEmail,
   UpdateUserActive,
 } from "../models/user";
+import { sendResponse } from "../utils/sendResponse";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -19,11 +20,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const checkEmail = await getUserByEmail(email);
     if (checkEmail.length === 0) {
-      res.status(404).json({
-        valid: false,
-        status: 404,
-        message: "Email not registered",
-      });
+      sendResponse(res, 404, false, "Email not registred");
       return; // Exit the function after sending the response
     }
     const checkUserActive = checkEmail.find((v) => v?.is_active)?.is_active;
@@ -45,34 +42,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           { expiresIn: "1h" }
         );
 
-        res.status(200).json({
-          valid: true,
-          status: 200,
-          message: "Login successfully",
-          data: { token: token },
-        });
+        sendResponse(res, 200, true, "Login Successfully", { token: token });
         return; // Exit the function after sending the response
       } else {
-        res.status(400).json({
-          valid: false,
-          status: 400,
-          message: "Incorrect Email or Password",
-        });
+        sendResponse(res, 400, false, "Incorrect Email or Password");
         return; // Exit the function after sending the response
       }
     } else {
-      res?.status(400)?.json({
-        valid: false,
-        status: 400,
-        message: "Account not actived",
-      });
+      sendResponse(res, 400, false, "Account not actived");
     }
   } catch (error) {
-    res.status(500).json({
-      valid: false,
-      status: 500,
-      message: error || "Internal server error",
-    });
+    sendResponse(res, 500, false, "Internal server error");
   }
 };
 
@@ -89,21 +69,12 @@ export const requestOtpController = async (req: Request, res: Response) => {
       created_at: date,
     });
 
-    res.json({
-      valid: true,
-      status: 200,
-      message: "Check your email to verify your account",
-    });
+    sendResponse(res, 200, true, "Check your email to verify your account");
     const subject = "Email Verification";
     const message = `Your OTP code is: ${otp}`;
     sendMail(email, subject, message);
   } catch (error) {
-    res.json({
-      valid: false,
-      status: 500,
-      message: error,
-      data: [],
-    });
+    sendResponse(res, 500, false, "Internal Server Error");
   }
 };
 
@@ -115,21 +86,13 @@ export const verifyOtpController = async (
 
   try {
     if (!otp_code || !email) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "OTP code and email are required",
-      });
+      sendResponse(res, 400, false, "OTP code and email are required");
       return;
     }
 
     const otpResult = await verifyOtp({ otp_code, unique_code, email });
     if (otpResult.length === 0) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Invalid OTP",
-      });
+      sendResponse(res, 400, false, "Invalid OTP");
       return;
     }
 
@@ -138,38 +101,21 @@ export const verifyOtpController = async (
     expirationTime.setMinutes(expirationTime.getMinutes() + 5);
 
     if (new Date() > expirationTime) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "OTP has expired",
-      });
+      sendResponse(res, 400, false, "OTP has expired");
       return;
     }
 
     const isActive = await checkUserActive(user_id);
     if (isActive) {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "Account is already active",
-      });
+      sendResponse(res, 400, false, "Account is already active");
       return;
     }
 
     await UpdateUserActive(user_id);
     await updateOtpUsed(otp_code);
 
-    res.status(200).json({
-      valid: true,
-      status: 200,
-      message: "Account has been successfully activated",
-    });
+    sendResponse(res, 200, true, "Account has been successfully actived");
   } catch (error) {
-    console.error("Error in verifyOtpController:", error);
-    res.status(500).json({
-      valid: false,
-      status: 500,
-      message: "Internal server error",
-    });
+    sendResponse(res, 500, false, "Internal server error");
   }
 };

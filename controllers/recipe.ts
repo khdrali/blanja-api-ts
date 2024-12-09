@@ -9,6 +9,7 @@ import {
 import dotenv from "dotenv";
 import { CreateRecipeType } from "../models/type";
 import { GetUserByIdModels } from "../models/user";
+import { sendResponse } from "../utils/sendResponse";
 
 dotenv.config();
 
@@ -19,11 +20,7 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
     const user_id = req.user?.id ?? 0; // Ambil user_id dari token
 
     if (!user_id || user_id == 0) {
-      res.status(401).json({
-        valid: false,
-        status: 401,
-        message: "Unauthorized",
-      });
+      sendResponse(res, 401, false, "Unauthorized");
     }
 
     const image_recipe = files.image_recipe
@@ -52,43 +49,23 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
         });
       }
     }
-
-    res.status(200).json({
-      valid: true,
-      status: 200,
-      message: "Successfully Created Recipe",
-      data: {
-        recipe: recipe,
-        videos: files.videos
-          ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
-          : [],
-      },
+    sendResponse(res, 200, true, "Successfully Created Recipe", {
+      recipe: recipe,
+      videos: files?.videos
+        ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
+        : [],
     });
   } catch (error) {
-    res.status(500).json({
-      valid: false,
-      status: 500,
-      message: "Error creating recipe and videos",
-    });
+    sendResponse(res, 500, false, "Error creating recipe videos");
   }
 };
 
 export const GetAllRecipeController = async (req: Request, res: Response) => {
   try {
     const result = await GetAllRecipeModels();
-    res.json({
-      valid: true,
-      status: 200,
-      message: "Successfuly Get All Data",
-      data: result,
-    });
+    sendResponse(res, 200, true, "Successfully Get All Data", result);
   } catch (error) {
-    res.json({
-      valid: false,
-      status: 500,
-      message: error,
-      data: [],
-    });
+    sendResponse(res, 500, false, "Internal server error", []);
   }
 };
 
@@ -96,36 +73,17 @@ export const GetRecipeByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req?.params;
     if (typeof id !== "string") {
-      res.status(400).json({
-        valid: false,
-        status: 400,
-        message: "ID parameter must be a string",
-      });
+      sendResponse(res, 400, false, "ID parameter must be a string");
     }
 
     const result = await GetRecipeByIdModels(id);
     if (result && result.length > 0) {
-      res.status(200).json({
-        valid: true,
-        status: 200,
-        message: "Successfully Get Recipe",
-        data: result,
-      });
+      sendResponse(res, 200, true, "Successfully Get Recipe", result);
     } else {
-      res.status(404).json({
-        valid: false,
-        status: 404,
-        message: "Recipe Not Found",
-        data: [],
-      });
+      sendResponse(res, 404, false, "Recipe Not Found", []);
     }
   } catch (error) {
-    res.status(500).json({
-      valid: false,
-      status: 500,
-      message: error,
-      data: [],
-    });
+    sendResponse(res, 500, false, "Internal Server Error", []);
   }
 };
 
@@ -138,28 +96,11 @@ export const GetRecipeByUserIdController = async (
 
     const result = await GetRecipeByUserIdModels(id);
     if (result && result.length > 0) {
-      res.status(200).json({
-        valid: true,
-        status: 200,
-        message: "Successfuly Get Recipe",
-        data: result,
-      });
+      sendResponse(res, 200, true, "Successfully Get Recipe", result);
     } else {
-      res?.status(404)?.json({
-        valid: false,
-        status: 404,
-        message: "Recipe Not Found",
-        data: [],
-      });
+      sendResponse(res, 404, false, "Recipe Not Found", []);
     }
   } catch (error) {
-    console.log(error);
-
-    res?.status(500)?.json({
-      valid: false,
-      status: 500,
-      message: error,
-      data: [],
-    });
+    sendResponse(res, 500, false, "Internal Server Error", []);
   }
 };

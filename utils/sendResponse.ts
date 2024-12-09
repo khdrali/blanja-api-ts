@@ -4,13 +4,13 @@ export const sendResponse = (
   res: Response,
   statusCode: number,
   valid: boolean,
-  message: string,
+  messageRes?: string,
   data?: any
 ): void => {
   res.status(statusCode).json({
     valid,
     status: statusCode,
-    message,
+    message: messageRes ?? "Internal Server Error",
     data,
   });
 };
