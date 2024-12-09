@@ -1,5 +1,5 @@
 import db from "../db";
-import { CreateType } from "./type";
+import { ChangeResetPasswordType, CreateType } from "./type";
 
 export const GetAllUserModels = async () => {
   return await db`SELECT * FROM public.user`;
@@ -33,4 +33,10 @@ export const UpdateUserActive = async (user_id: number) => {
     SET is_active = true
     WHERE id = ${user_id}
   `;
+};
+
+export const ChangeResetPasswordModels = async (
+  data: ChangeResetPasswordType
+) => {
+  return await db`UPDATE public.user SET password=${data?.new_password} WHERE id=${data?.id}`;
 };

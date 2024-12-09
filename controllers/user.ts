@@ -7,6 +7,7 @@ import {
   getUserByEmail,
   GetUserByIdModels,
 } from "../models/user";
+import { sendResponse } from "../utils/sendResponse";
 dotenv.config();
 const saltrounds = 10;
 
@@ -16,19 +17,9 @@ export const GetAllUserController = async (
 ): Promise<void> => {
   try {
     const resAllUser = await GetAllUserModels();
-    res.json({
-      valid: true,
-      status: 200,
-      message: "Successfully Get Data",
-      data: resAllUser,
-    });
+    sendResponse(res, 200, true, "Successfully Get Data", resAllUser);
   } catch (error) {
-    res.json({
-      valid: false,
-      status: 500,
-      message: error,
-      data: [],
-    });
+    sendResponse(res, 500, false, "Internal server error", []);
   }
 };
 
@@ -77,39 +68,39 @@ export const CreateUserControllers = async (
   }
 };
 
-export const GetUserByIdController=async(req:Request,res:Response)=>{
+export const GetUserByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req?.params;
-    if (typeof id !== 'string') {
-       res.status(400).json({
+    if (typeof id !== "string") {
+      res.status(400).json({
         valid: false,
         status: 400,
-        message: 'ID parameter must be a string',
+        message: "ID parameter must be a string",
       });
     }
 
     const result = await GetUserByIdModels(id);
     if (result && result.length > 0) {
-       res.status(200).json({
+      res.status(200).json({
         valid: true,
         status: 200,
-        message: 'Successfully Get User',
+        message: "Successfully Get User",
         data: result,
       });
     } else {
-       res.status(404).json({
+      res.status(404).json({
         valid: false,
         status: 404,
-        message: 'User Not Found',
+        message: "User Not Found",
         data: [],
       });
     }
   } catch (error) {
-   res.status(500).json({
-    valid:false,
-    status:500,
-    message:error,
-    data:[]
-   })
+    res.status(500).json({
+      valid: false,
+      status: 500,
+      message: error,
+      data: [],
+    });
   }
-}
+};

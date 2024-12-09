@@ -8,3 +8,7 @@ export const RequestResetPasswordModels = async (data: ResetPasswordType) => {
 export const ResetPasswordUsedModels = async (token: string) => {
   return await db`UPDATE reset_password SET is_used=true WHERE token=${token}`;
 };
+
+export const GetDataResetPasswordModels = async (token: string) => {
+  return await db`SELECT * FROM reset_password WHERE token=${token}`;
+};

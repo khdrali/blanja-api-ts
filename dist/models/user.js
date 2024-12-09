@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
+exports.ChangeResetPasswordModels = exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
 const db_1 = __importDefault(require("../db"));
 const GetAllUserModels = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield (0, db_1.default) `SELECT * FROM public.user`;
@@ -49,3 +49,7 @@ const UpdateUserActive = (user_id) => __awaiter(void 0, void 0, void 0, function
   `;
 });
 exports.UpdateUserActive = UpdateUserActive;
+const ChangeResetPasswordModels = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `UPDATE public.user SET password=${data === null || data === void 0 ? void 0 : data.new_password} WHERE id=${data === null || data === void 0 ? void 0 : data.id}`;
+});
+exports.ChangeResetPasswordModels = ChangeResetPasswordModels;

@@ -2,6 +2,7 @@ import { requestOtpModels, updateOtpUsed, verifyOtp } from "../models/otp";
 import { sendMail } from "../utils/nodemailer";
 import { generateOTP } from "../utils/otp";
 import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -79,9 +80,11 @@ export const requestOtpController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const otp = generateOTP();
+    const uuid = uuidv4();
     const date = new Date();
     await requestOtpModels({
       otp_code: otp,
+      unique_code: uuid,
       email,
       created_at: date,
     });
@@ -108,7 +111,7 @@ export const verifyOtpController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { otp_code, email } = req.body;
+  const { otp_code, unique_code, email } = req.body;
 
   try {
     if (!otp_code || !email) {
@@ -120,7 +123,7 @@ export const verifyOtpController = async (
       return;
     }
 
-    const otpResult = await verifyOtp({ otp_code, email });
+    const otpResult = await verifyOtp({ otp_code, unique_code, email });
     if (otpResult.length === 0) {
       res.status(400).json({
         valid: false,

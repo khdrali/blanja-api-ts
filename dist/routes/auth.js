@@ -12,4 +12,5 @@ authRoutes.post("/login", validation_1.validateLogin, validation_1.handleValidat
 authRoutes.post("/request-otp", otp_1.requestOtpController);
 authRoutes.post("/verify-otp", otp_1.verifyOtpController);
 authRoutes.post("/reset-password", resetPassword_1.RequestResetPasswordControllers);
+authRoutes.post("/change-password", resetPassword_1.ChangeResetPasswordControllers);
 exports.default = authRoutes;
