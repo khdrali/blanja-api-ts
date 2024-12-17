@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateOtpUsed = exports.verifyOtp = exports.requestOtpModels = void 0;
 const db_1 = __importDefault(require("../db"));
 const requestOtpModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, db_1.default) `INSERT INTO public.otp_request (otp_code, user_id, created_at) 
-  VALUES (${params === null || params === void 0 ? void 0 : params.otp_code}, 
+    return yield (0, db_1.default) `INSERT INTO public.otp_request (otp_code, unique_code user_id, created_at) 
+  VALUES (${params === null || params === void 0 ? void 0 : params.otp_code},${params === null || params === void 0 ? void 0 : params.unique_code}, 
     (SELECT id FROM public.user WHERE email = ${params === null || params === void 0 ? void 0 : params.email}), ${params === null || params === void 0 ? void 0 : params.created_at}
   )`;
 });
@@ -26,7 +26,8 @@ const verifyOtp = (params) => __awaiter(void 0, void 0, void 0, function* () {
       SELECT otp_request.user_id, otp_request.created_at 
       FROM otp_request
       JOIN "user" ON otp_request.user_id = "user".id 
-      WHERE otp_request.otp_code = ${params === null || params === void 0 ? void 0 : params.otp_code} 
+      WHERE otp_request.otp_code = ${params === null || params === void 0 ? void 0 : params.otp_code}
+        AND otp_request.unique_code=${params === null || params === void 0 ? void 0 : params.unique_code} 
         AND "user".email = ${params === null || params === void 0 ? void 0 : params.email} 
         AND otp_request.is_used = false
     `;

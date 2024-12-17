@@ -3,8 +3,8 @@ import { CreateRecipeType, CreateVideoType, GetDataType } from "./type";
 
 export const CreateRecipeModels = async (params: CreateRecipeType) => {
   const result = await connect`
-    INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
-    VALUES (${params.title}, ${params.ingredients}, ${params.image_recipe}, ${params.user_id}, ${params.created_at})
+    INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at, category_id)
+    VALUES (${params.title}, ${params.ingredients}, ${params.image_recipe}, ${params.user_id}, ${params.created_at},${params?.category_id})
     RETURNING *`;
 
   return result[0];

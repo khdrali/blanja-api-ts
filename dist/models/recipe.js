@@ -16,8 +16,8 @@ exports.GetRecipeByUserIdModels = exports.GetRecipeByIdModels = exports.GetAllRe
 const db_1 = __importDefault(require("../db"));
 const CreateRecipeModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (0, db_1.default) `
-    INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at)
-    VALUES (${params.title}, ${params.ingredients}, ${params.image_recipe}, ${params.user_id}, ${params.created_at})
+    INSERT INTO public.recipe (title, ingredients, image_recipe, user_id, created_at, category_id)
+    VALUES (${params.title}, ${params.ingredients}, ${params.image_recipe}, ${params.user_id}, ${params.created_at},${params === null || params === void 0 ? void 0 : params.category_id})
     RETURNING *`;
     return result[0];
 });

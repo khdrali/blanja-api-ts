@@ -72,3 +72,16 @@ export const GetUserByIdController = async (req: Request, res: Response) => {
     sendResponse(res, 500, false, "Internal server error", []);
   }
 };
+
+export const UpdateUserProfileController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { username, phone } = req?.body;
+    const { id } = req?.params;
+    if (Number(id) !== req.user?.id) {
+      sendResponse(res, 400, false, "Unauthorized");
+    }
+  } catch (error) {}
+};

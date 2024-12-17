@@ -2,6 +2,7 @@ import express from "express";
 import userRoutes from "./routes/user";
 import authRoutes from "./routes/auth";
 import recipeRotes from "./routes/recipe";
+import categoryRoutes from "./routes/category";
 import multer from "multer";
 import dotenv from "dotenv";
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/recipe", recipeRotes);
+app.use("/category", categoryRoutes);
 
 app
   .listen(PORT, () => {

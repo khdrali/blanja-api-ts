@@ -14,7 +14,7 @@ import { sendResponse } from "../utils/sendResponse";
 dotenv.config();
 
 export const CreateRecipeController = async (req: Request, res: Response) => {
-  const { title, ingredients } = req.body;
+  const { title, ingredients, category_id } = req.body;
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
   try {
     const user_id = req.user?.id ?? 0; // Ambil user_id dari token
@@ -34,6 +34,7 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
       ingredients: ingredients,
       image_recipe: image_recipe,
       created_at: new Date(),
+      category_id: category_id as number,
     };
 
     const recipe = await CreateRecipeModels(recipeParams);
@@ -48,13 +49,9 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
           video_url: videoUlr, // Pass array of video URLs
         });
       }
+      recipe.videos = videoUlrs;
     }
-    sendResponse(res, 200, true, "Successfully Created Recipe", {
-      recipe: recipe,
-      videos: files?.videos
-        ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
-        : [],
-    });
+    sendResponse(res, 200, true, "Successfully Created Recipe", recipe);
   } catch (error) {
     sendResponse(res, 500, false, "Error creating recipe videos");
   }

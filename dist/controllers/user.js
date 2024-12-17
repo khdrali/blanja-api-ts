@@ -16,25 +16,16 @@ exports.GetUserByIdController = exports.CreateUserControllers = exports.GetAllUs
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_1 = require("../models/user");
+const sendResponse_1 = require("../utils/sendResponse");
 dotenv_1.default.config();
 const saltrounds = 10;
 const GetAllUserController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const resAllUser = yield (0, user_1.GetAllUserModels)();
-        res.json({
-            valid: true,
-            status: 200,
-            message: "Successfully Get Data",
-            data: resAllUser,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Get Data", resAllUser);
     }
     catch (error) {
-        res.json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: [],
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal server error", []);
     }
 });
 exports.GetAllUserController = GetAllUserController;
@@ -43,19 +34,11 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
         const { username, email, password, phone } = req.body;
         const checkEmail = yield (0, user_1.getUserByEmail)(email);
         if ((checkEmail === null || checkEmail === void 0 ? void 0 : checkEmail.length) >= 1) {
-            res.json({
-                valid: false,
-                status: 401,
-                message: "Email already exist",
-            });
+            (0, sendResponse_1.sendResponse)(res, 401, false, "Email already exist");
         }
         bcrypt_1.default.hash(password, saltrounds, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
-                return {
-                    valid: false,
-                    status: 500,
-                    message: "Authentication Failed",
-                };
+                (0, sendResponse_1.sendResponse)(res, 500, false, "Authentication Failed");
             }
             yield (0, user_1.CreateUserController)({
                 username: username,
@@ -63,58 +46,30 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 password: hash,
                 phone: phone,
             });
-            res.json({
-                valid: true,
-                status: 200,
-                message: "Successfully create account!, please check your email for verfication your account",
-            });
+            (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully create account!, please check your email for verfication your account");
         }));
     }
     catch (error) {
-        res.json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: [],
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal server error", []);
     }
 });
 exports.CreateUserControllers = CreateUserControllers;
 const GetUserByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req === null || req === void 0 ? void 0 : req.params;
-        if (typeof id !== 'string') {
-            res.status(400).json({
-                valid: false,
-                status: 400,
-                message: 'ID parameter must be a string',
-            });
+        if (typeof id !== "string") {
+            (0, sendResponse_1.sendResponse)(res, 400, false, "ID parameter must be a string");
         }
         const result = yield (0, user_1.GetUserByIdModels)(id);
         if (result && result.length > 0) {
-            res.status(200).json({
-                valid: true,
-                status: 200,
-                message: 'Successfully Get User',
-                data: result,
-            });
+            (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Get User", result);
         }
         else {
-            res.status(404).json({
-                valid: false,
-                status: 404,
-                message: 'User Not Found',
-                data: [],
-            });
+            (0, sendResponse_1.sendResponse)(res, 404, false, "User Not Found", []);
         }
     }
     catch (error) {
-        res.status(500).json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: []
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal server error", []);
     }
 });
 exports.GetUserByIdController = GetUserByIdController;

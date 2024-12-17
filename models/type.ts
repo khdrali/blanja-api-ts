@@ -25,6 +25,7 @@ export interface CreateRecipeType {
   image_recipe: string | null;
   user_id: number;
   created_at: Date;
+  category_id: number;
 }
 
 export interface CreateVideoType {
@@ -51,4 +52,10 @@ export interface ResetPasswordType {
 export interface ChangeResetPasswordType {
   new_password: string;
   id: number;
+}
+
+export interface UpdateUserProfileType {
+  id: number;
+  username: string;
+  phone: string;
 }

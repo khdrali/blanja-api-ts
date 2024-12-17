@@ -15,19 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetRecipeByUserIdController = exports.GetRecipeByIdController = exports.GetAllRecipeController = exports.CreateRecipeController = void 0;
 const recipe_1 = require("../models/recipe");
 const dotenv_1 = __importDefault(require("dotenv"));
+const sendResponse_1 = require("../utils/sendResponse");
 dotenv_1.default.config();
 const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { title, ingredients } = req.body;
+    const { title, ingredients, category_id } = req.body;
     const files = req.files;
     try {
         const user_id = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : 0; // Ambil user_id dari token
         if (!user_id || user_id == 0) {
-            res.status(401).json({
-                valid: false,
-                status: 401,
-                message: "Unauthorized",
-            });
+            (0, sendResponse_1.sendResponse)(res, 401, false, "Unauthorized");
         }
         const image_recipe = files.image_recipe
             ? `/uploads/images/${files.image_recipe[0].filename}`
@@ -39,6 +36,7 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             ingredients: ingredients,
             image_recipe: image_recipe,
             created_at: new Date(),
+            category_id: category_id,
         };
         const recipe = yield (0, recipe_1.CreateRecipeModels)(recipeParams);
         if (files.videos) {
@@ -49,45 +47,22 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
                     video_url: videoUlr, // Pass array of video URLs
                 });
             }
+            recipe.videos = videoUlrs;
         }
-        res.status(200).json({
-            valid: true,
-            status: 200,
-            message: "Successfully Created Recipe",
-            data: {
-                recipe: recipe,
-                videos: files.videos
-                    ? files.videos.map((video) => `/uploads/videos/${video.filename}`)
-                    : [],
-            },
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Created Recipe", recipe);
     }
     catch (error) {
-        res.status(500).json({
-            valid: false,
-            status: 500,
-            message: "Error creating recipe and videos",
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Error creating recipe videos");
     }
 });
 exports.CreateRecipeController = CreateRecipeController;
 const GetAllRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, recipe_1.GetAllRecipeModels)();
-        res.json({
-            valid: true,
-            status: 200,
-            message: "Successfuly Get All Data",
-            data: result,
-        });
+        (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Get All Data", result);
     }
     catch (error) {
-        res.json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: [],
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal server error", []);
     }
 });
 exports.GetAllRecipeController = GetAllRecipeController;
@@ -95,70 +70,34 @@ const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, 
     try {
         const { id } = req === null || req === void 0 ? void 0 : req.params;
         if (typeof id !== "string") {
-            res.status(400).json({
-                valid: false,
-                status: 400,
-                message: "ID parameter must be a string",
-            });
+            (0, sendResponse_1.sendResponse)(res, 400, false, "ID parameter must be a string");
         }
         const result = yield (0, recipe_1.GetRecipeByIdModels)(id);
         if (result && result.length > 0) {
-            res.status(200).json({
-                valid: true,
-                status: 200,
-                message: "Successfully Get Recipe",
-                data: result,
-            });
+            (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Get Recipe", result);
         }
         else {
-            res.status(404).json({
-                valid: false,
-                status: 404,
-                message: "Recipe Not Found",
-                data: [],
-            });
+            (0, sendResponse_1.sendResponse)(res, 404, false, "Recipe Not Found", []);
         }
     }
     catch (error) {
-        res.status(500).json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: [],
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal Server Error", []);
     }
 });
 exports.GetRecipeByIdController = GetRecipeByIdController;
 const GetRecipeByUserIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     try {
         const { id } = req === null || req === void 0 ? void 0 : req.params;
         const result = yield (0, recipe_1.GetRecipeByUserIdModels)(id);
         if (result && result.length > 0) {
-            res.status(200).json({
-                valid: true,
-                status: 200,
-                message: "Successfuly Get Recipe",
-                data: result,
-            });
+            (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Get Recipe", result);
         }
         else {
-            (_a = res === null || res === void 0 ? void 0 : res.status(404)) === null || _a === void 0 ? void 0 : _a.json({
-                valid: false,
-                status: 404,
-                message: "Recipe Not Found",
-                data: [],
-            });
+            (0, sendResponse_1.sendResponse)(res, 404, false, "Recipe Not Found", []);
         }
     }
     catch (error) {
-        console.log(error);
-        (_b = res === null || res === void 0 ? void 0 : res.status(500)) === null || _b === void 0 ? void 0 : _b.json({
-            valid: false,
-            status: 500,
-            message: error,
-            data: [],
-        });
+        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal Server Error", []);
     }
 });
 exports.GetRecipeByUserIdController = GetRecipeByUserIdController;
