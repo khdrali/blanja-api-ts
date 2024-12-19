@@ -7,7 +7,12 @@ import {
   getUserByEmail,
   GetUserByIdModels,
 } from "../models/user";
-import { sendResponse } from "../utils/sendResponse";
+import {
+  Data,
+  errorResponse,
+  sendResponse,
+  sendResponses,
+} from "../utils/sendResponse";
 dotenv.config();
 const saltrounds = 10;
 
@@ -16,10 +21,32 @@ export const GetAllUserController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const resAllUser = await GetAllUserModels();
-    sendResponse(res, 200, true, "Successfully Get Data", resAllUser);
+    const limit = 10;
+    const page = Number(req.query.page) || 1;
+    const offset = (page - 1) * limit;
+    const resAllUser = await GetAllUserModels({
+      sort: "id DESC",
+      limit: String(limit),
+      offset: String(offset),
+    });
+    const totalPage = Math.ceil(resAllUser.total_rows / limit);
+    const responseData: Data = {
+      limit: limit,
+      page: page,
+      sort: "id Desc",
+      total_page: totalPage,
+      total_rows: Number(resAllUser.total_rows),
+      rows: resAllUser?.rows,
+    };
+
+    // sendResponse(res, 200, true, "Successfully Get Data", resAllUser);
+    res
+      .status(200)
+      .json(sendResponses(req, responseData, "Successfully Get Data", 200));
   } catch (error) {
-    sendResponse(res, 500, false, "Internal server error", []);
+    res
+      .status(500)
+      .json(errorResponse(req, "Internal Server Error", 500, "error"));
   }
 };
 
@@ -51,7 +78,9 @@ export const CreateUserControllers = async (
       );
     });
   } catch (error) {
-    sendResponse(res, 500, false, "Internal server error", []);
+    res
+      .status(500)
+      .json(errorResponse(req, "Internal Server Error", 500, "error"));
   }
 };
 
@@ -59,17 +88,27 @@ export const GetUserByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req?.params;
     if (typeof id !== "string") {
-      sendResponse(res, 400, false, "ID parameter must be a string");
+      // sendResponse(res, 400, false, "ID parameter must be a string");
+      res
+        .status(400)
+        .json(errorResponse(req, "Params id is required", 400, "bad_request"));
     }
 
     const result = await GetUserByIdModels(id);
     if (result && result.length > 0) {
-      sendResponse(res, 200, true, "Successfully Get User", result);
+      res
+        .status(200)
+        .json(sendResponses(req, result, "Successfully Get User", 200));
     } else {
-      sendResponse(res, 404, false, "User Not Found", []);
+      // sendResponse(res, 404, false, "User Not Found", []);
+      res
+        .status(404)
+        .json(errorResponse(req, "User Not Found", 404, "not_found"));
     }
   } catch (error) {
-    sendResponse(res, 500, false, "Internal server error", []);
+    res
+      .status(500)
+      .json(errorResponse(req, "Internal Server Error", 500, "error"));
   }
 };
 

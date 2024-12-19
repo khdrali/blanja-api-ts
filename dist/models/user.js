@@ -12,10 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChangeResetPasswordModels = exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
+exports.UpdateUserProfileModels = exports.ChangeResetPasswordModels = exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
 const db_1 = __importDefault(require("../db"));
-const GetAllUserModels = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, db_1.default) `SELECT * FROM public.user`;
+const GetAllUserModels = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    // Query untuk mengambil data user
+    const query = `${data.sort} LIMIT ${data === null || data === void 0 ? void 0 : data.limit} OFFSET ${data === null || data === void 0 ? void 0 : data.offset}`;
+    const users = yield (0, db_1.default) `SELECT * FROM public.user ORDER BY ${query}`;
+    // Query untuk menghitung total rows
+    const countResult = yield (0, db_1.default) `SELECT COUNT(*) AS total_rows FROM public.user `;
+    return {
+        total_rows: ((_a = countResult[0]) === null || _a === void 0 ? void 0 : _a.total_rows) || 0,
+        rows: users,
+    };
 });
 exports.GetAllUserModels = GetAllUserModels;
 const GetUserByIdModels = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -53,3 +62,7 @@ const ChangeResetPasswordModels = (data) => __awaiter(void 0, void 0, void 0, fu
     return yield (0, db_1.default) `UPDATE public.user SET password=${data === null || data === void 0 ? void 0 : data.new_password} WHERE id=${data === null || data === void 0 ? void 0 : data.id}`;
 });
 exports.ChangeResetPasswordModels = ChangeResetPasswordModels;
+const UpdateUserProfileModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `UPDATE public.user SET username=${params === null || params === void 0 ? void 0 : params.username}, phone=${params === null || params === void 0 ? void 0 : params.phone} WHERE id=${params === null || params === void 0 ? void 0 : params.id}`;
+});
+exports.UpdateUserProfileModels = UpdateUserProfileModels;

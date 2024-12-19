@@ -59,3 +59,9 @@ export interface UpdateUserProfileType {
   username: string;
   phone: string;
 }
+
+export interface LimitType {
+  sort: string;
+  limit: string;
+  offset: string;
+}

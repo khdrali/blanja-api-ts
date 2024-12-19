@@ -2,11 +2,22 @@ import db from "../db";
 import {
   ChangeResetPasswordType,
   CreateType,
+  LimitType,
   UpdateUserProfileType,
 } from "./type";
 
-export const GetAllUserModels = async () => {
-  return await db`SELECT * FROM public.user`;
+export const GetAllUserModels = async (data: LimitType) => {
+  // Query untuk mengambil data user
+  const query = `${data.sort} LIMIT ${data?.limit} OFFSET ${data?.offset}`;
+  const users = await db`SELECT * FROM public.user ORDER BY ${query}`;
+
+  // Query untuk menghitung total rows
+  const countResult = await db`SELECT COUNT(*) AS total_rows FROM public.user `;
+
+  return {
+    total_rows: countResult[0]?.total_rows || 0,
+    rows: users,
+  };
 };
 
 export const GetUserByIdModels = async (id: string) => {
