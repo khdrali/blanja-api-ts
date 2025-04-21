@@ -58,13 +58,26 @@ export const CreateUserControllers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { username, email, password, phone } = req.body;
+    const { username, email, password, phone, confirm_password } = req.body;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const checkEmail = await getUserByEmail(email);
     if (checkEmail?.length >= 1) {
       res
         .status(401)
         .json(errorResponse(req, "Email Already Exist", 401, "Unauthorized"));
+      return;
+    }
+    if (password !== confirm_password) {
+      res
+        .status(400)
+        .json(
+          errorResponse(
+            req,
+            "Password & Confirm password doesn't match",
+            400,
+            "error"
+          )
+        );
       return;
     }
     const image_Profile = files.photo
