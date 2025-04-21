@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserProfileModels = exports.ChangeResetPasswordModels = exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
+exports.ChangePasswordModels = exports.UpdateUserProfileModels = exports.ChangeResetPasswordModels = exports.UpdateUserActive = exports.checkUserActive = exports.CreateUserController = exports.getUserByEmail = exports.GetUserByIdModels = exports.GetAllUserModels = void 0;
 const db_1 = __importDefault(require("../db"));
 const GetAllUserModels = (data) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -63,6 +63,10 @@ const ChangeResetPasswordModels = (data) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.ChangeResetPasswordModels = ChangeResetPasswordModels;
 const UpdateUserProfileModels = (params) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, db_1.default) `UPDATE public.user SET username=${params === null || params === void 0 ? void 0 : params.username}, phone=${params === null || params === void 0 ? void 0 : params.phone} WHERE id=${params === null || params === void 0 ? void 0 : params.id}`;
+    return yield (0, db_1.default) `UPDATE public.user SET username=${params === null || params === void 0 ? void 0 : params.username}, phone=${params === null || params === void 0 ? void 0 : params.phone},photo=${params === null || params === void 0 ? void 0 : params.photo} WHERE id=${params === null || params === void 0 ? void 0 : params.id}`;
 });
 exports.UpdateUserProfileModels = UpdateUserProfileModels;
+const ChangePasswordModels = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield (0, db_1.default) `UPDATE public.user SET password=${data === null || data === void 0 ? void 0 : data.new_password} WHERE id=${data === null || data === void 0 ? void 0 : data.id}`;
+});
+exports.ChangePasswordModels = ChangePasswordModels;

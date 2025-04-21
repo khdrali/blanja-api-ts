@@ -33,20 +33,20 @@ interface ApiResponse {
   message: string;
 }
 
-export const sendResponse = (
-  res: Response,
-  statusCode: number,
-  valid: boolean,
-  messageRes?: string,
-  data?: any
-): void => {
-  res.status(statusCode).json({
-    valid,
-    status: statusCode,
-    message: messageRes ?? "Internal Server Error",
-    data,
-  });
-};
+// export const sendResponse = (
+//   res: Response,
+//   statusCode: number,
+//   valid: boolean,
+//   messageRes?: string,
+//   data?: any
+// ): void => {
+//   res.status(statusCode).json({
+//     valid,
+//     status: statusCode,
+//     message: messageRes ?? "Internal Server Error",
+//     data,
+//   });
+// };
 
 export function sendResponses(
   req: Request,
@@ -71,7 +71,7 @@ export function sendResponses(
 
 export function sendResponsePaginate(
   req: Request,
-  data: any,
+  data: Data,
   message: string,
   statusCode: number
 ): ApiResponsePaginate {

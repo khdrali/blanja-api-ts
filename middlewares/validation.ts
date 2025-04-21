@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import { errorResponse } from "../utils/sendResponse";
 
 export const validateCreate = [
   body("username").notEmpty().withMessage("username is required"),
@@ -50,11 +51,9 @@ export const handleValidationErrors = (
       return error?.msg;
     });
 
-    res.status(400).json({
-      valid: false,
-      status: 400,
-      message: errorMessages,
-    });
+    res
+      .status(400)
+      .json(errorResponse(req, String(errorMessages), 400, "error"));
   }
 
   next();

@@ -14,6 +14,17 @@ router.post("/add-recipe", multerConfig_1.default.fields([
     { name: "videos", maxCount: 3 },
 ]), validate_token_1.validateToken, recipe_1.CreateRecipeController);
 router.get("/get-recipe", recipe_1.GetAllRecipeController);
-router.get("/detail-recipe/:id", recipe_1.GetRecipeByIdController);
+router.get("/detail-recipe/:id", validate_token_1.validateToken, recipe_1.GetRecipeByIdController);
 router.get("/user-recipe/:id", validate_token_1.validateToken, recipe_1.GetRecipeByUserIdController);
+router.patch("/update-recipe/:id", multerConfig_1.default.fields([
+    {
+        name: "image_recipe",
+        maxCount: 1,
+    },
+    {
+        name: "videos",
+        maxCount: 3,
+    },
+]), validate_token_1.validateToken, recipe_1.UpdateRecipeController);
+router.delete("/delete-recipe/:id", validate_token_1.validateToken, recipe_1.DeleteRecipeController);
 exports.default = router;

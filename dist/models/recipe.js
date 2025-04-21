@@ -46,7 +46,9 @@ const CreateVideoModels = (params) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.CreateVideoModels = CreateVideoModels;
-const GetAllRecipeModels = () => __awaiter(void 0, void 0, void 0, function* () {
+const GetAllRecipeModels = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const query = `${data.sort} LIMIT ${data === null || data === void 0 ? void 0 : data.limit} OFFSET ${data === null || data === void 0 ? void 0 : data.offset}`;
     const result = yield (0, db_1.default) `
     SELECT 
       r.id AS recipe_id,
@@ -64,9 +66,13 @@ const GetAllRecipeModels = () => __awaiter(void 0, void 0, void 0, function* () 
       r.id = v.recipe_id
     GROUP BY 
       r.id, r.title, r.ingredients, r.image_recipe, r.user_id, r.created_at
-    LIMIT 10
+    ORDER BY ${query}
       `;
-    return result;
+    const countResult = yield (0, db_1.default) `SELECT COUNT(*) AS total_rows FROM public.recipe `;
+    return {
+        total_rows: ((_a = countResult[0]) === null || _a === void 0 ? void 0 : _a.total_rows) || 0,
+        rows: result,
+    };
 });
 exports.GetAllRecipeModels = GetAllRecipeModels;
 const GetRecipeByIdModels = (id) => __awaiter(void 0, void 0, void 0, function* () {

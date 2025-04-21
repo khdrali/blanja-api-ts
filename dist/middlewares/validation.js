@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleValidationErrors = exports.validateLogin = exports.validateCreate = void 0;
 const express_validator_1 = require("express-validator");
+const sendResponse_1 = require("../utils/sendResponse");
 exports.validateCreate = [
     (0, express_validator_1.body)("username").notEmpty().withMessage("username is required"),
     (0, express_validator_1.body)("email")
@@ -39,11 +40,9 @@ const handleValidationErrors = (req, res, next) => {
             // Ensure type safety by narrowing the error type
             return error === null || error === void 0 ? void 0 : error.msg;
         });
-        res.status(400).json({
-            valid: false,
-            status: 400,
-            message: errorMessages,
-        });
+        res
+            .status(400)
+            .json((0, sendResponse_1.errorResponse)(req, String(errorMessages), 400, "error"));
     }
     next();
 };

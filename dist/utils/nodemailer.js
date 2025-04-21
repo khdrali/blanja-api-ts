@@ -19,16 +19,16 @@ dotenv_1.default.config();
 const sendMail = (email, subject, message) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const trasporter = nodemailer_1.default.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
+            secure: process.env.SMTP_SECURE,
             auth: {
-                user: "khaidarali48@gmail.com",
-                pass: "coog efmw lpsy sdne",
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
             },
         });
         const mailOptions = {
-            from: "khaidarali48@gmail.com",
+            from: process.env.SMTP_USER,
             to: email,
             subject: subject,
             html: message,

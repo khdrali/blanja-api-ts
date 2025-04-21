@@ -14,10 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChangeResetPasswordControllers = exports.RequestResetPasswordControllers = void 0;
 const uuid_1 = require("uuid");
-const resetPassword_1 = require("../models/resetPassword");
+const resetPassword_1 = require("../models/resetPassword/resetPassword");
 const nodemailer_1 = require("../utils/nodemailer");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const user_1 = require("../models/user");
+const user_1 = require("../models/user/user");
 const sendResponse_1 = require("../utils/sendResponse");
 const saltrounds = 10;
 const RequestResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,13 +26,17 @@ const RequestResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, 
         const date = new Date();
         const token = (0, uuid_1.v4)();
         yield (0, resetPassword_1.RequestResetPasswordModels)({ email, token, created_at: date });
-        (0, sendResponse_1.sendResponse)(res, 200, true, "Check your email to reset password");
+        res
+            .status(200)
+            .json((0, sendResponse_1.sendResponses)(req, null, "Check your email to reset password", 200));
         const subject = "Reset Password";
         const meesage = `<a href=http://localhost:3000/reset-password?token=${token}>Click here</a> to reset password`;
         (0, nodemailer_1.sendMail)(email, subject, meesage);
     }
     catch (error) {
-        (0, sendResponse_1.sendResponse)(res, 500, false, "Internal server error");
+        res
+            .status(500)
+            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
     }
 });
 exports.RequestResetPasswordControllers = RequestResetPasswordControllers;
@@ -41,27 +45,33 @@ const ChangeResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, v
         const { new_password, confirm_password } = req.body;
         const { token } = req === null || req === void 0 ? void 0 : req.query;
         if (new_password !== confirm_password) {
-            (0, sendResponse_1.sendResponse)(res, 400, false, "Password & Confirm password doesn't match");
+            res
+                .status(400)
+                .json((0, sendResponse_1.errorResponse)(req, "Password & Confirm password doesn't match", 400, "error"));
             return;
         }
         if (typeof token !== "string" || !token) {
-            (0, sendResponse_1.sendResponse)(res, 400, false, "Invalid token format");
+            res
+                .status(400)
+                .json((0, sendResponse_1.errorResponse)(req, "Invalid token format", 400, "error"));
             return;
         }
         const checkTokenUser = yield (0, resetPassword_1.GetDataResetPasswordModels)(token);
         if (!checkTokenUser || checkTokenUser.length === 0) {
-            (0, sendResponse_1.sendResponse)(res, 404, false, "Invalid Token");
+            res.status(404).json((0, sendResponse_1.errorResponse)(req, "Invalid Token", 404, "error"));
             return;
         }
         const { user_id, is_used, created_at } = checkTokenUser[0];
         if (is_used) {
-            (0, sendResponse_1.sendResponse)(res, 400, false, "Token has already been used");
+            res
+                .status(400)
+                .json((0, sendResponse_1.errorResponse)(req, "Token has already been used", 400, "error"));
             return;
         }
         const expiredToken = new Date(created_at);
         expiredToken.setMinutes(expiredToken.getMinutes() + 10);
         if (new Date() > expiredToken) {
-            (0, sendResponse_1.sendResponse)(res, 400, false, "Token Expired");
+            res.status(400).json((0, sendResponse_1.errorResponse)(req, "Token Expired", 400, "error"));
             return;
         }
         const hashPassword = yield bcrypt_1.default.hash(new_password, saltrounds);
@@ -70,10 +80,12 @@ const ChangeResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, v
             id: user_id,
         });
         yield (0, resetPassword_1.ResetPasswordUsedModels)(token);
-        (0, sendResponse_1.sendResponse)(res, 200, true, "Successfully Changed Password");
+        res
+            .status(200)
+            .json((0, sendResponse_1.sendResponses)(req, null, "Successfully Changed Password", 200));
     }
     catch (error) {
-        (0, sendResponse_1.sendResponse)(res, 500, false);
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, error, 500, "error"));
     }
 });
 exports.ChangeResetPasswordControllers = ChangeResetPasswordControllers;

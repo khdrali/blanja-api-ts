@@ -1,18 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendResponse = void 0;
 exports.sendResponses = sendResponses;
 exports.sendResponsePaginate = sendResponsePaginate;
 exports.errorResponse = errorResponse;
-const sendResponse = (res, statusCode, valid, messageRes, data) => {
-    res.status(statusCode).json({
-        valid,
-        status: statusCode,
-        message: messageRes !== null && messageRes !== void 0 ? messageRes : "Internal Server Error",
-        data,
-    });
-};
-exports.sendResponse = sendResponse;
+// export const sendResponse = (
+//   res: Response,
+//   statusCode: number,
+//   valid: boolean,
+//   messageRes?: string,
+//   data?: any
+// ): void => {
+//   res.status(statusCode).json({
+//     valid,
+//     status: statusCode,
+//     message: messageRes ?? "Internal Server Error",
+//     data,
+//   });
+// };
 function sendResponses(req, data, message, statusCode) {
     return {
         details: {
