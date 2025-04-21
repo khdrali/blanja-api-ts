@@ -91,8 +91,8 @@ export const CreateUserControllers = async (
         .json(
           sendResponses(
             req,
+            null,
             "Successfully create account!, please check your email for verfication your account",
-            "",
             200
           )
         );
