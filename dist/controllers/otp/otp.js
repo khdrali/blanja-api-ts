@@ -75,6 +75,10 @@ const requestOtpController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const otp = (0, otp_2.generateOTP)();
         const uuid = (0, uuid_1.v4)();
         const date = new Date();
+        const respData = {
+            otp_code: otp,
+            unique_code: uuid,
+        };
         yield (0, otp_1.requestOtpModels)({
             otp_code: otp,
             unique_code: uuid,
@@ -83,7 +87,7 @@ const requestOtpController = (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
         res
             .status(200)
-            .json((0, sendResponse_1.sendResponses)(req, null, "Check your email to verify your account", 200));
+            .json((0, sendResponse_1.sendResponses)(req, respData, "Check your email to verify your account", 200));
         const subject = "Email Verification";
         const message = `Your OTP code is: ${otp}`;
         (0, nodemailer_1.sendMail)(email, subject, message);

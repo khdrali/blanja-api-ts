@@ -80,6 +80,10 @@ export const requestOtpController = async (req: Request, res: Response) => {
     const uuid = uuidv4();
     const date = new Date();
 
+    const respData = {
+      otp_code: otp,
+      unique_code: uuid,
+    };
     await requestOtpModels({
       otp_code: otp,
       unique_code: uuid,
@@ -89,7 +93,12 @@ export const requestOtpController = async (req: Request, res: Response) => {
     res
       .status(200)
       .json(
-        sendResponses(req, null, "Check your email to verify your account", 200)
+        sendResponses(
+          req,
+          respData,
+          "Check your email to verify your account",
+          200
+        )
       );
     const subject = "Email Verification";
     const message = `Your OTP code is: ${otp}`;
