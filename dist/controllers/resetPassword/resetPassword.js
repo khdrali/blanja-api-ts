@@ -34,9 +34,11 @@ const RequestResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, 
         (0, nodemailer_1.sendMail)(email, subject, meesage);
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.RequestResetPasswordControllers = RequestResetPasswordControllers;
@@ -84,7 +86,11 @@ const ChangeResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, v
             .json((0, sendResponse_1.sendResponses)(req, null, "Successfully Changed Password", 200));
     }
     catch (error) {
-        res.status(500).json((0, sendResponse_1.errorResponse)(req, error, 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.ChangeResetPasswordControllers = ChangeResetPasswordControllers;

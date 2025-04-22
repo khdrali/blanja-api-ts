@@ -43,9 +43,11 @@ const GetAllUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
             .json((0, sendResponse_1.sendResponsePaginate)(req, responseData, "Successfully Get Data", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetAllUserController = GetAllUserController;
@@ -155,9 +157,11 @@ const UpdateUserProfileController = (req, res) => __awaiter(void 0, void 0, void
         }
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.UpdateUserProfileController = UpdateUserProfileController;
@@ -199,9 +203,11 @@ const ChangePasswordControllers = (req, res) => __awaiter(void 0, void 0, void 0
             .json((0, sendResponse_1.sendResponses)(req, null, "Successfully Update Password", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.ChangePasswordControllers = ChangePasswordControllers;

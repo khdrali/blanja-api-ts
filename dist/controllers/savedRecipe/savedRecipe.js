@@ -36,8 +36,11 @@ const savedRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(200).json((0, sendResponse_1.sendResponses)(req, null, message, 200));
     }
     catch (error) {
-        console.log(error);
-        res === null || res === void 0 ? void 0 : res.status(500).json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res === null || res === void 0 ? void 0 : res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.savedRecipeController = savedRecipeController;
@@ -68,9 +71,11 @@ const GetSavedRecipeByUserController = (req, res) => __awaiter(void 0, void 0, v
             .json((0, sendResponse_1.sendResponsePaginate)(req, responseData, "Successfully Get Recipe", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal server error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetSavedRecipeByUserController = GetSavedRecipeByUserController;

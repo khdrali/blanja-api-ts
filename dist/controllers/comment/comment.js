@@ -50,9 +50,11 @@ const CreateCommentRecipeController = (req, res) => __awaiter(void 0, void 0, vo
             .json((0, sendResponse_1.sendResponses)(req, null, "Successfully Added Comments", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.CreateCommentRecipeController = CreateCommentRecipeController;
@@ -80,9 +82,11 @@ const DeleteCommentRecipeController = (req, res) => __awaiter(void 0, void 0, vo
             .json((0, sendResponse_1.sendResponses)(req, null, "Successfully Deleted Commnet", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal server error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.DeleteCommentRecipeController = DeleteCommentRecipeController;
@@ -113,10 +117,11 @@ const GetCommentRecipeController = (req, res) => __awaiter(void 0, void 0, void 
             .json((0, sendResponse_1.sendResponsePaginate)(req, responseData, "Successfully Get Comment", 200));
     }
     catch (error) {
-        console.log(error);
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal server error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetCommentRecipeController = GetCommentRecipeController;

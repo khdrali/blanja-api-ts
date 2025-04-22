@@ -28,7 +28,11 @@ const addCategoryController = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .json((0, sendResponse_1.sendResponses)(req, null, "Successfully add category", 200));
     }
     catch (error) {
-        res.status(500).json((0, sendResponse_1.errorResponse)(req, String(error), 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.addCategoryController = addCategoryController;
@@ -40,7 +44,11 @@ const getCategoryController = (req, res) => __awaiter(void 0, void 0, void 0, fu
             .json((0, sendResponse_1.sendResponses)(req, result, "Successfuly Get Category", 200));
     }
     catch (error) {
-        res.status(500).json((0, sendResponse_1.errorResponse)(req, String(error), 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.getCategoryController = getCategoryController;
@@ -64,8 +72,11 @@ const UpdateCategoryController = (req, res) => __awaiter(void 0, void 0, void 0,
         res === null || res === void 0 ? void 0 : res.status(200).json((0, sendResponse_1.sendResponses)(req, null, "Successfuly Update Category", 200));
     }
     catch (error) {
-        console.error(error);
-        res === null || res === void 0 ? void 0 : res.status(500).json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res === null || res === void 0 ? void 0 : res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.UpdateCategoryController = UpdateCategoryController;

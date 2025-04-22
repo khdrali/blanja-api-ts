@@ -59,7 +59,11 @@ const CreateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             .json((0, sendResponse_1.sendResponses)(req, recipe, "Successfully Created Recipe", 200));
     }
     catch (error) {
-        res.status(500).json((0, sendResponse_1.errorResponse)(req, String(error), 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.CreateRecipeController = CreateRecipeController;
@@ -93,10 +97,11 @@ const GetAllRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             .json((0, sendResponse_1.sendResponsePaginate)(req, responseData, "Successfully Get All Data", 200));
     }
     catch (error) {
-        console.log(error);
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetAllRecipeController = GetAllRecipeController;
@@ -127,10 +132,11 @@ const GetRecipeByIdController = (req, res) => __awaiter(void 0, void 0, void 0, 
         }
     }
     catch (error) {
-        console.error("Error GetAllRecipeController:", error);
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetRecipeByIdController = GetRecipeByIdController;
@@ -150,9 +156,11 @@ const GetRecipeByUserIdController = (req, res) => __awaiter(void 0, void 0, void
         }
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Errro", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetRecipeByUserIdController = GetRecipeByUserIdController;
@@ -219,9 +227,11 @@ const UpdateRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(200).json((0, sendResponse_1.sendResponses)(req, Object.assign(Object.assign({}, resultRecipe[0]), { videos: updatedVideos }), "Recipe and videos updated successfully", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.UpdateRecipeController = UpdateRecipeController;
@@ -267,9 +277,11 @@ const DeleteRecipeController = (req, res) => __awaiter(void 0, void 0, void 0, f
             .json((0, sendResponse_1.sendResponses)(req, null, "Recipe deleted successfully", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.DeleteRecipeController = DeleteRecipeController;

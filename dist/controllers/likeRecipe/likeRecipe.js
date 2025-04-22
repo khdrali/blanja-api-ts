@@ -36,9 +36,11 @@ const CreateLikeRecipeController = (req, res) => __awaiter(void 0, void 0, void 
         res.status(200).json((0, sendResponse_1.sendResponses)(req, null, message, 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.CreateLikeRecipeController = CreateLikeRecipeController;
@@ -69,9 +71,11 @@ const GetLikeRecipeByUserController = (req, res) => __awaiter(void 0, void 0, vo
             .json((0, sendResponse_1.sendResponsePaginate)(req, responseData, "Successfully Get Recipe", 200));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal server error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.GetLikeRecipeByUserController = GetLikeRecipeByUserController;
