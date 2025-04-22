@@ -57,9 +57,12 @@ export const CreateCommentRecipeController = async (
       .status(200)
       .json(sendResponses(req, null, "Successfully Added Comments", 200));
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -99,9 +102,12 @@ export const DeleteCommentRecipeController = async (
       .status(200)
       .json(sendResponses(req, null, "Successfully Deleted Commnet", 200));
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal server error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -139,10 +145,12 @@ export const GetCommentRecipeController = async (
         sendResponsePaginate(req, responseData, "Successfully Get Comment", 200)
       );
   } catch (error) {
-    console.log(error);
+    let message = "Internal Server Error";
 
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal server error", 500, "error"));
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

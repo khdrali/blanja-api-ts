@@ -74,7 +74,12 @@ export const CreateRecipeController = async (req: Request, res: Response) => {
       .status(200)
       .json(sendResponses(req, recipe, "Successfully Created Recipe", 200));
   } catch (error) {
-    res.status(500).json(errorResponse(req, String(error), 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -117,11 +122,13 @@ export const GetAllRecipeController = async (req: Request, res: Response) => {
         )
       );
   } catch (error) {
-    console.log(error);
+    let message = "Internal Server Error";
 
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -153,10 +160,12 @@ export const GetRecipeByIdController = async (req: Request, res: Response) => {
         .json(errorResponse(req, "Recipe Not Found", 404, "error"));
     }
   } catch (error) {
-    console.error("Error GetAllRecipeController:", error);
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -178,9 +187,12 @@ export const GetRecipeByUserIdController = async (
         .json(errorResponse(req, "Recipe Not Found", 404, "error"));
     }
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Errro", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -272,9 +284,12 @@ export const UpdateRecipeController = async (
       )
     );
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -330,8 +345,11 @@ export const DeleteRecipeController = async (req: Request, res: Response) => {
       .status(200)
       .json(sendResponses(req, null, "Recipe deleted successfully", 200));
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

@@ -92,7 +92,7 @@ export function sendResponsePaginate(
 
 export function errorResponse(
   req: Request,
-  message: string,
+  message: any,
   statusCode: number,
   statusMsg: string
 ): ApiResponse {

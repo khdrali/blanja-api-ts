@@ -47,9 +47,12 @@ export const GetAllUserController = async (
         sendResponsePaginate(req, responseData, "Successfully Get Data", 200)
       );
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -59,7 +62,6 @@ export const CreateUserControllers = async (
 ): Promise<void> => {
   try {
     const { username, email, password, phone, confirm_password } = req.body;
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     const checkEmail = await getUserByEmail(email);
     if (checkEmail?.length >= 1) {
       res
@@ -80,9 +82,6 @@ export const CreateUserControllers = async (
         );
       return;
     }
-    const image_Profile = files.photo
-      ? `/uploads/images/${files.photo[0].filename}`
-      : null;
     bcrypt.hash(password, saltrounds, async (err, hash) => {
       if (err) {
         res
@@ -96,7 +95,7 @@ export const CreateUserControllers = async (
         email: email,
         password: hash,
         phone: phone,
-        photo: image_Profile,
+        photo: null,
       });
 
       res
@@ -111,9 +110,12 @@ export const CreateUserControllers = async (
         );
     });
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -179,9 +181,12 @@ export const UpdateUserProfileController = async (
         .json(sendResponses(req, null, "Successfuly update data", 200));
     }
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -236,8 +241,11 @@ export const ChangePasswordControllers = async (
       .status(200)
       .json(sendResponses(req, null, "Successfully Update Password", 200));
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

@@ -39,9 +39,12 @@ export const CreateLikeRecipeController = async (
       : "You unliked the recipe.";
     res.status(200).json(sendResponses(req, null, message, 200));
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -82,8 +85,11 @@ export const GetLikeRecipeByUserController = async (
         sendResponsePaginate(req, responseData, "Successfully Get Recipe", 200)
       );
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal server error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

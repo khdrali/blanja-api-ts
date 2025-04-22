@@ -20,7 +20,6 @@ router.get("/", validateToken, GetAllUserController);
 router.get("/user/:id", validateToken, GetUserByIdController);
 router.post(
   "/add",
-  upload.fields([{ name: "photo", maxCount: 1 }]),
   validateCreate,
   handleValidationErrors,
   CreateUserControllers

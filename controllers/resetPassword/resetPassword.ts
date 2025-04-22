@@ -24,15 +24,23 @@ export const RequestResetPasswordControllers = async (
     res
       .status(200)
       .json(
-        sendResponses(req, null, "Check your email to reset password", 200)
+        sendResponses(
+          req,
+          { token: token },
+          "Check your email to reset password",
+          200
+        )
       );
     const subject = "Reset Password";
     const meesage = `<a href=http://localhost:3000/reset-password?token=${token}>Click here</a> to reset password`;
     sendMail(email, subject, meesage);
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -41,8 +49,7 @@ export const ChangeResetPasswordControllers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { new_password, confirm_password } = req.body;
-    const { token } = req?.query;
+    const { new_password, confirm_password, token } = req.body;
 
     if (new_password !== confirm_password) {
       res
@@ -99,6 +106,11 @@ export const ChangeResetPasswordControllers = async (
       .status(200)
       .json(sendResponses(req, null, "Successfully Changed Password", 200));
   } catch (error) {
-    res.status(500).json(errorResponse(req, error as string, 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

@@ -28,7 +28,7 @@ const RequestResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, 
         yield (0, resetPassword_1.RequestResetPasswordModels)({ email, token, created_at: date });
         res
             .status(200)
-            .json((0, sendResponse_1.sendResponses)(req, null, "Check your email to reset password", 200));
+            .json((0, sendResponse_1.sendResponses)(req, { token: token }, "Check your email to reset password", 200));
         const subject = "Reset Password";
         const meesage = `<a href=http://localhost:3000/reset-password?token=${token}>Click here</a> to reset password`;
         (0, nodemailer_1.sendMail)(email, subject, meesage);
@@ -42,8 +42,7 @@ const RequestResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, 
 exports.RequestResetPasswordControllers = RequestResetPasswordControllers;
 const ChangeResetPasswordControllers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { new_password, confirm_password } = req.body;
-        const { token } = req === null || req === void 0 ? void 0 : req.query;
+        const { new_password, confirm_password, token } = req.body;
         if (new_password !== confirm_password) {
             res
                 .status(400)

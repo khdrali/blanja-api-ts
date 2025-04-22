@@ -52,7 +52,6 @@ exports.GetAllUserController = GetAllUserController;
 const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password, phone, confirm_password } = req.body;
-        const files = req.files;
         const checkEmail = yield (0, user_1.getUserByEmail)(email);
         if ((checkEmail === null || checkEmail === void 0 ? void 0 : checkEmail.length) >= 1) {
             res
@@ -66,9 +65,6 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 .json((0, sendResponse_1.errorResponse)(req, "Password & Confirm password doesn't match", 400, "error"));
             return;
         }
-        const image_Profile = files.photo
-            ? `/uploads/images/${files.photo[0].filename}`
-            : null;
         bcrypt_1.default.hash(password, saltrounds, (err, hash) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 res
@@ -81,7 +77,7 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 email: email,
                 password: hash,
                 phone: phone,
-                photo: image_Profile,
+                photo: null,
             });
             res
                 .status(200)
@@ -89,9 +85,11 @@ const CreateUserControllers = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }));
     }
     catch (error) {
-        res
-            .status(500)
-            .json((0, sendResponse_1.errorResponse)(req, "Internal Server Error", 500, "error"));
+        let message = "Internal Server Error";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        res.status(500).json((0, sendResponse_1.errorResponse)(req, message, 500, "error"));
     }
 });
 exports.CreateUserControllers = CreateUserControllers;

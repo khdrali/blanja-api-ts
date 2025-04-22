@@ -67,9 +67,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         .json(errorResponse(req, "Account not actived", 400, "error"));
     }
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -104,9 +107,12 @@ export const requestOtpController = async (req: Request, res: Response) => {
     const message = `Your OTP code is: ${otp}`;
     sendMail(email, subject, message);
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -158,8 +164,11 @@ export const verifyOtpController = async (
         sendResponses(req, null, "Account has been successfully actived", 200)
       );
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };

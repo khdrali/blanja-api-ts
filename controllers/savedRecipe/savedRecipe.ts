@@ -39,11 +39,13 @@ export const savedRecipeController = async (req: Request, res: Response) => {
       : "You Unsaved the Recipe";
     res.status(200).json(sendResponses(req, null, message, 200));
   } catch (error) {
-    console.log(error);
+    let message = "Internal Server Error";
 
-    res
-      ?.status(500)
-      .json(errorResponse(req, "Internal Server Error", 500, "error"));
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    res?.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
 
@@ -83,8 +85,11 @@ export const GetSavedRecipeByUserController = async (
         sendResponsePaginate(req, responseData, "Successfully Get Recipe", 200)
       );
   } catch (error) {
-    res
-      .status(500)
-      .json(errorResponse(req, "Internal server error", 500, "error"));
+    let message = "Internal Server Error";
+
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500).json(errorResponse(req, message, 500, "error"));
   }
 };
